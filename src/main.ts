@@ -5,6 +5,7 @@ import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
 import '@fontsource/roboto/900.css';
 import '@mdi/font/css/materialdesignicons.css';
+import { VueQueryPlugin } from '@tanstack/vue-query';
 import { createPinia } from 'pinia';
 import { createApp } from 'vue';
 import { createVuetify } from 'vuetify';
@@ -20,7 +21,7 @@ const vuetify = createVuetify({
   components,
   directives,
 });
-
+app.use(VueQueryPlugin);
 app.use(createPinia());
 app.use(router);
 app.use(vuetify);
