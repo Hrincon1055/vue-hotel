@@ -27,7 +27,13 @@
         @update:model-value="onSearch"
         @blur="onBlur"
       ></v-text-field>
-      <v-btn v-else icon="mdi-magnify" variant="text" @click="showSearch = true"></v-btn>
+      <v-btn
+        v-else
+        icon="mdi-magnify"
+        size="small"
+        variant="text"
+        @click="showSearch = true"
+      ></v-btn>
     </Transition>
     <v-tooltip text="Crear item" location="bottom">
       <template #activator="{ props: tooltipProps }">

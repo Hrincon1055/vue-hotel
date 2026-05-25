@@ -18,8 +18,8 @@
               <template #activator="{ props: menuProps }">
                 <div v-bind="menuProps" class="column-header d-flex align-center">
                   <span class="flex-grow-1">{{ col.title }}</span>
-                  <v-icon v-if="sortKey === col.key" size="small" class="ml-1">
-                    {{ sortOrder === 'asc' ? 'mdi-arrow-up' : 'mdi-arrow-down' }}
+                  <v-icon v-if="sortKey === col.key" size="x-small" class="ml-1">
+                    {{ sortOrder === 'asc' ? 'mdi-sort-ascending' : 'mdi-sort-descending' }}
                   </v-icon>
                 </div>
               </template>
@@ -137,6 +137,36 @@
         </tr>
       </tbody>
     </v-table>
+
+    <!-- Paginación -->
+    <div
+      v-if="totalItems > 0"
+      class="d-flex align-center justify-space-between pa-3 pagination-container"
+    >
+      <div class="text-caption text-medium-emphasis">
+        Mostrando {{ startItem }}-{{ endItem }} de {{ totalItems }}
+      </div>
+      <div class="d-flex align-center ga-4">
+        <v-select
+          :model-value="itemsPerPage"
+          :items="itemsPerPageOptions"
+          density="compact"
+          variant="outlined"
+          hide-details
+          style="max-width: 80px"
+          @update:model-value="onItemsPerPageChange"
+        ></v-select>
+        <v-pagination
+          :model-value="page"
+          :length="totalPages"
+          :total-visible="5"
+          density="compact"
+          rounded
+          active-color="primary"
+          @update:model-value="onPageChange"
+        ></v-pagination>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -157,15 +187,24 @@ interface Props {
   items: Record<string, unknown>[];
   itemKey?: string;
   modelValue?: Record<string, unknown>[];
+  // Paginación
+  page?: number;
+  itemsPerPage?: number;
+  totalItems?: number;
 }
 
 const props = withDefaults(defineProps<Props>(), {
   itemKey: 'id',
   modelValue: () => [],
+  page: 1,
+  itemsPerPage: 10,
+  totalItems: 0,
 });
 
 const emit = defineEmits<{
   'update:modelValue': [value: Record<string, unknown>[]];
+  'update:page': [value: number];
+  'update:itemsPerPage': [value: number];
   sort: [key: string, order: 'asc' | 'desc'];
 }>();
 
@@ -308,6 +347,30 @@ const getStatusColor = (status: unknown): string => {
   };
   return statusColors[String(status)] || 'default';
 };
+
+// Paginación
+const itemsPerPageOptions = [5, 10, 25, 50, 100];
+
+const totalPages = computed(() => Math.ceil(props.totalItems / props.itemsPerPage));
+
+const startItem = computed(() => {
+  if (props.totalItems === 0) return 0;
+  return (props.page - 1) * props.itemsPerPage + 1;
+});
+
+const endItem = computed(() => {
+  const end = props.page * props.itemsPerPage;
+  return Math.min(end, props.totalItems);
+});
+
+const onPageChange = (newPage: number) => {
+  emit('update:page', newPage);
+};
+
+const onItemsPerPageChange = (newItemsPerPage: number) => {
+  emit('update:itemsPerPage', newItemsPerPage);
+  emit('update:page', 1); // Reset a la primera página
+};
 </script>
 
 <style scoped>
@@ -336,6 +399,10 @@ const getStatusColor = (status: unknown): string => {
 .column-header {
   cursor: pointer;
   padding: 4px 0;
+}
+
+.pagination-container {
+  border-top: 1px solid rgba(var(--v-border-color), 0.12);
 }
 </style>
 
