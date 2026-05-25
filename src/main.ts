@@ -14,6 +14,7 @@ import * as directives from 'vuetify/directives';
 import 'vuetify/styles';
 import App from './App.vue';
 import './assets/main.css';
+import { useAuthStore } from './modules/auth/store/auth.store';
 import router from './router';
 const app = createApp(App);
 
@@ -22,7 +23,12 @@ const vuetify = createVuetify({
   directives,
 });
 app.use(VueQueryPlugin);
-app.use(createPinia());
+const pinia = createPinia();
+app.use(pinia);
+
+// Inicializar el store de autenticación para cargar la sesión desde localStorage
+useAuthStore();
+
 app.use(router);
 app.use(vuetify);
 app.mount('#app');

@@ -82,11 +82,11 @@ const onSubmit = async () => {
   if (!valid) return;
   loading.value = true;
   try {
-    const response = await authService.login({
+    const authResponse = await authService.login({
       email: form.email,
       password: form.password,
     });
-    authStore.setAuth(response);
+    authStore.setAuth(authResponse.data);
     router.replace('/');
   } finally {
     loading.value = false;
