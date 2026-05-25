@@ -25,8 +25,6 @@ const vuetify = createVuetify({
 app.use(VueQueryPlugin);
 const pinia = createPinia();
 app.use(pinia);
-
-// Inicializar el store de autenticación para cargar la sesión desde localStorage
 useAuthStore();
 
 app.use(router);

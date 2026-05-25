@@ -38,9 +38,6 @@
               </v-btn>
             </v-form>
           </v-card-text>
-          <!-- <v-card-actions class="justify-center pb-4">
-            <a href="#" class="text-primary">¿Olvidaste tu contraseña?</a>
-          </v-card-actions> -->
         </v-card>
       </v-col>
     </v-row>
@@ -49,10 +46,11 @@
 
 <script setup lang="ts">
 /**imports */
-import { reactive, ref } from 'vue';
+import { onMounted, reactive, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { authService } from '../services/auth.service';
 import { useAuthStore } from '../store/auth.store';
+
 /**code */
 const formRef = ref();
 const valid = ref(false);
@@ -65,6 +63,14 @@ const form = reactive({
   email: '',
   password: '',
   remember: false,
+});
+
+onMounted(() => {
+  const savedEmail = localStorage.getItem(import.meta.env.VITE_REMEMBER_EMAIL_KEY);
+  if (savedEmail) {
+    form.email = savedEmail;
+    form.remember = true;
+  }
 });
 
 const emailRules = [
@@ -86,6 +92,11 @@ const onSubmit = async () => {
       email: form.email,
       password: form.password,
     });
+    if (form.remember) {
+      localStorage.setItem(import.meta.env.VITE_REMEMBER_EMAIL_KEY, form.email);
+    } else {
+      localStorage.removeItem(import.meta.env.VITE_REMEMBER_EMAIL_KEY);
+    }
     authStore.setAuth(authResponse.data);
     router.replace('/');
   } finally {

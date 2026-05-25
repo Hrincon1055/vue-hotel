@@ -5,7 +5,6 @@ import type { AuthResponse, LoginDto } from '../interfaces/auth.interface';
 export const authService = {
   async login(payload: LoginDto) {
     const response = await api.post<Response<AuthResponse>>('/auth/login', payload);
-    console.log('auth.service LINE 7 =>', response.data);
     return response.data;
   },
 
