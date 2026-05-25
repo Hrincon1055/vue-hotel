@@ -10,18 +10,25 @@
         ></v-list-item>
       </v-list>
       <v-divider></v-divider>
-      <v-list density="compact" nav>
+      <v-list density="compact" nav color="primary">
         <v-list-item
           prepend-icon="mdi-view-dashboard"
           title="Dashboard"
-          value="myfiles"
+          value="dashboard"
+          to="/dashboard"
         ></v-list-item>
         <v-list-item
           prepend-icon="mdi-account-multiple"
-          title="Shared with me"
-          value="shared"
+          title="Empleados"
+          value="employees"
+          to="/employees"
         ></v-list-item>
-        <v-list-item prepend-icon="mdi-star" title="Starred" value="starred"></v-list-item>
+        <v-list-item
+          prepend-icon="mdi-bed"
+          title="Habitaciones"
+          value="rooms"
+          to="/rooms"
+        ></v-list-item>
       </v-list>
     </v-navigation-drawer>
     <v-main>
