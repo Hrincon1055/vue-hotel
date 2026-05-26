@@ -19,7 +19,7 @@
           <span class="text-body-1 font-weight-medium">{{ title }}</span>
         </div>
         <v-spacer />
-        <v-tooltip text="Guardar" location="bottom">
+        <!-- <v-tooltip text="Guardar" location="bottom">
           <template #activator="{ props: tooltipProps }">
             <v-btn
               v-bind="tooltipProps"
@@ -30,7 +30,7 @@
               variant="tonal"
             ></v-btn>
           </template>
-        </v-tooltip>
+        </v-tooltip> -->
       </v-toolbar>
     </template>
 
