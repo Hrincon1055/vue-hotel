@@ -68,7 +68,6 @@ export const useAuthStore = defineStore('auth', () => {
   };
 
   const loadFromStorage = () => {
-    console.log('auth.store LINE 85 =>');
     const storedToken = localStorage.getItem(import.meta.env.VITE_ACCESS_TOKEN_KEY);
     const storedRefresh = localStorage.getItem(import.meta.env.VITE_REFRESH_TOKEN_KEY);
     const storedUser = localStorage.getItem(import.meta.env.VITE_USER_KEY);
