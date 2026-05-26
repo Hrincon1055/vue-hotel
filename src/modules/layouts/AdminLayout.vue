@@ -1,4 +1,3 @@
-|
 <template>
   <v-layout class="layout-container">
     <v-navigation-drawer v-model="drawer" :width="256">

@@ -5,8 +5,12 @@
       subtitle="Habitaciones"
       icon="mdi-bed"
       :item-count="totalItems"
+      :selected-items="selectedRooms"
       create-route="/rooms/create"
+      edit-route="/rooms/edit"
+      item-key="id"
       @search="onSearch"
+      @delete="onDelete"
     />
 
     <DataTable
@@ -115,6 +119,15 @@ const onSort = (key: string, order: 'asc' | 'desc') => {
   sortKey.value = key;
   sortOrder.value = order;
   page.value = 1;
+};
+
+const onDelete = (items: Record<string, unknown>[]) => {
+  console.log('Eliminar items:', items);
+  // Aquí iría la llamada al API para eliminar
+  // await api.delete('/rooms', { data: { ids: items.map(i => i.id) } });
+  // Limpiar selección y recargar
+  selectedRooms.value = [];
+  fetchData();
 };
 
 // Recargar datos cuando cambian los parámetros

@@ -10,6 +10,7 @@
               hide-details
               density="compact"
               color="primary"
+              class="table-checkbox"
               @update:model-value="toggleSelectAll"
             ></v-checkbox>
           </th>
@@ -106,6 +107,7 @@
               hide-details
               density="compact"
               color="primary"
+              class="table-checkbox"
               @update:model-value="toggleSelect(item)"
             ></v-checkbox>
           </td>
@@ -403,6 +405,11 @@ const onItemsPerPageChange = (newItemsPerPage: number) => {
 
 .pagination-container {
   border-top: 1px solid rgba(var(--v-border-color), 0.12);
+}
+
+.table-checkbox {
+  transform: scale(0.8);
+  transform-origin: center;
 }
 </style>
 

@@ -7,8 +7,11 @@
       <span class="text-disabled subtitle-text">{{ subtitle }}</span>
       <span class="text-body-1 font-weight-medium">{{ title }}</span>
     </div>
-    <v-spacer></v-spacer>
-    <span v-if="itemCount" class="text-body-2 text-medium-emphasis mr-4">
+    <v-spacer />
+    <span v-if="hasSelection" class="text-body-2 text-primary font-weight-medium mr-4">
+      {{ selectedItems.length }} seleccionado{{ selectedItems.length > 1 ? 's' : '' }}
+    </span>
+    <span v-else-if="itemCount" class="text-body-2 text-medium-emphasis mr-4">
       {{ itemCountText }}
     </span>
     <Transition name="search-grow" mode="out-in">
@@ -35,6 +38,32 @@
         @click="showSearch = true"
       ></v-btn>
     </Transition>
+    <v-tooltip v-if="hasSelection" text="Eliminar" location="bottom">
+      <template #activator="{ props: tooltipProps }">
+        <v-btn
+          v-bind="tooltipProps"
+          icon="mdi-delete"
+          color="error"
+          size="small"
+          class="ml-2"
+          variant="tonal"
+          @click="onDelete"
+        ></v-btn>
+      </template>
+    </v-tooltip>
+    <v-tooltip v-if="canEdit" text="Editar" location="bottom">
+      <template #activator="{ props: tooltipProps }">
+        <v-btn
+          v-bind="tooltipProps"
+          icon="mdi-pencil"
+          color="info"
+          size="small"
+          class="ml-2"
+          variant="tonal"
+          :to="editRouteWithId"
+        ></v-btn>
+      </template>
+    </v-tooltip>
     <v-tooltip text="Crear item" location="bottom">
       <template #activator="{ props: tooltipProps }">
         <v-btn
@@ -60,15 +89,21 @@ interface Props {
   subtitle?: string;
   icon?: string;
   itemCount?: number;
+  selectedItems?: Record<string, unknown>[];
+  editRoute?: string;
+  itemKey?: string;
 }
 
 const props = withDefaults(defineProps<Props>(), {
   icon: 'mdi-file-document-outline',
   subtitle: 'Content',
+  selectedItems: () => [],
+  itemKey: 'id',
 });
 
 const emit = defineEmits<{
   search: [value: string];
+  delete: [items: Record<string, unknown>[]];
 }>();
 
 const showSearch = ref(false);
@@ -80,8 +115,23 @@ const itemCountText = computed(() => {
   return `${props.itemCount} Items`;
 });
 
+const hasSelection = computed(() => props.selectedItems.length > 0);
+
+const canEdit = computed(() => props.selectedItems.length === 1 && props.editRoute);
+
+const editRouteWithId = computed(() => {
+  if (!canEdit.value || !props.selectedItems[0]) return '';
+  const selectedItem = props.selectedItems[0];
+  const id = selectedItem[props.itemKey];
+  return `${props.editRoute}/${id}`;
+});
+
 const onSearch = (value: string) => {
   emit('search', value);
+};
+
+const onDelete = () => {
+  emit('delete', props.selectedItems);
 };
 
 const onBlur = () => {
