@@ -1,6 +1,54 @@
+import { useAlert } from '@/modules/common/composables/useAlert';
 import { QueryClient } from '@tanstack/vue-query';
 import type { AxiosError, InternalAxiosRequestConfig } from 'axios';
 import axios from 'axios';
+
+// Inicializar el composable de alertas
+const { showError, showWarning } = useAlert();
+
+// Interfaz para respuestas de error del API
+interface ApiErrorResponse {
+  message?: string;
+  error?: string;
+  statusCode?: number;
+}
+
+// Función para extraer el mensaje de error
+const getErrorMessage = (error: AxiosError<ApiErrorResponse>): string => {
+  // Intentar obtener el mensaje del cuerpo de la respuesta
+  if (error.response?.data) {
+    const data = error.response.data;
+    if (typeof data === 'string') return data;
+    if (data.message) return data.message;
+    if (data.error) return data.error;
+  }
+
+  // Mensajes por defecto según el código de estado
+  const statusMessages: Record<number, string> = {
+    400: 'Solicitud incorrecta. Verifica los datos enviados.',
+    401: 'No autorizado. Por favor inicia sesión nuevamente.',
+    403: 'No tienes permisos para realizar esta acción.',
+    404: 'El recurso solicitado no fue encontrado.',
+    409: 'Conflicto con el estado actual del recurso.',
+    422: 'Los datos enviados no son válidos.',
+    500: 'Error interno del servidor. Intenta más tarde.',
+    502: 'Error de conexión con el servidor.',
+    503: 'Servicio no disponible temporalmente.',
+  };
+
+  const status = error.response?.status;
+  const statusMessage = status ? statusMessages[status] : undefined;
+  if (statusMessage) {
+    return statusMessage;
+  }
+
+  // Mensaje genérico si no hay respuesta
+  if (!error.response) {
+    return 'Error de conexión. Verifica tu conexión a internet.';
+  }
+
+  return 'Ha ocurrido un error inesperado.';
+};
 
 // Tipos para el manejo de refresh
 interface QueuedRequest {
@@ -54,17 +102,33 @@ api.interceptors.request.use((config) => {
 // Interceptor para manejar errores y refresh token
 api.interceptors.response.use(
   (response) => response,
-  async (error: AxiosError) => {
+  async (error: AxiosError<ApiErrorResponse>) => {
     const originalRequest = error.config as CustomAxiosRequestConfig;
     // Si no hay config o ya se intentó retry, rechazar
     if (!originalRequest) {
+      showError(getErrorMessage(error));
       throw error;
     }
     // Solo intentar refresh en errores 401 y si no es la ruta de refresh/login
     const isAuthRoute =
       originalRequest.url?.includes('/auth/refresh') ||
       originalRequest.url?.includes('/auth/login');
+
+    // Si no es un error 401 o ya se intentó retry o es ruta de auth
     if (error.response?.status !== 401 || originalRequest._retry || isAuthRoute) {
+      // Mostrar alerta según el tipo de error
+      const errorMessage = getErrorMessage(error);
+      const status = error.response?.status;
+
+      // No mostrar alerta para 401 que serán manejados por el redirect
+      if (status !== 401) {
+        if (status && status >= 400 && status < 500) {
+          showWarning(errorMessage);
+        } else {
+          showError(errorMessage);
+        }
+      }
+
       throw error;
     }
     // Si ya está refrescando, encolar la petición
@@ -103,6 +167,7 @@ api.interceptors.response.use(
       return api(originalRequest);
     } catch (refreshError) {
       processQueue(refreshError as Error, null);
+      showError('Tu sesión ha expirado. Por favor inicia sesión nuevamente.');
       clearSession();
       throw refreshError;
     } finally {

@@ -11,6 +11,7 @@
       item-key="id"
       @search="onSearch"
       @delete="onDelete"
+      @edit="onEdit"
     />
 
     <DataTable
@@ -32,6 +33,7 @@
 <script setup lang="ts">
 import ContentHeader from '@/modules/common/components/ContentHeader.vue';
 import DataTable, { type TableColumn } from '@/modules/common/components/DataTable.vue';
+
 import { ref, watch } from 'vue';
 
 // Columnas de la tabla
@@ -128,6 +130,10 @@ const onDelete = (items: Record<string, unknown>[]) => {
   // Limpiar selección y recargar
   selectedRooms.value = [];
   fetchData();
+};
+
+const onEdit = (item: Record<string, unknown>) => {
+  console.log('edit item:', item);
 };
 
 // Recargar datos cuando cambian los parámetros

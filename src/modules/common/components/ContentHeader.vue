@@ -8,7 +8,7 @@
       <span class="text-body-1 font-weight-medium">{{ title }}</span>
     </div>
     <v-spacer />
-    <span v-if="hasSelection" class="text-body-2 text-primary font-weight-medium mr-4">
+    <span v-if="hasSelection" class="text-body-2 mr-4">
       {{ selectedItems.length }} seleccionado{{ selectedItems.length > 1 ? 's' : '' }}
     </span>
     <span v-else-if="itemCount" class="text-body-2 text-medium-emphasis mr-4">
@@ -60,7 +60,7 @@
           size="small"
           class="ml-2"
           variant="tonal"
-          :to="editRouteWithId"
+          @click="onEdit"
         ></v-btn>
       </template>
     </v-tooltip>
@@ -81,7 +81,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { computed, ref, toRaw } from 'vue';
 
 interface Props {
   title: string;
@@ -90,20 +90,18 @@ interface Props {
   icon?: string;
   itemCount?: number;
   selectedItems?: Record<string, unknown>[];
-  editRoute?: string;
-  itemKey?: string;
 }
 
 const props = withDefaults(defineProps<Props>(), {
   icon: 'mdi-file-document-outline',
   subtitle: 'Content',
   selectedItems: () => [],
-  itemKey: 'id',
 });
 
 const emit = defineEmits<{
   search: [value: string];
   delete: [items: Record<string, unknown>[]];
+  edit: [item: Record<string, unknown>];
 }>();
 
 const showSearch = ref(false);
@@ -117,22 +115,24 @@ const itemCountText = computed(() => {
 
 const hasSelection = computed(() => props.selectedItems.length > 0);
 
-const canEdit = computed(() => props.selectedItems.length === 1 && props.editRoute);
-
-const editRouteWithId = computed(() => {
-  if (!canEdit.value || !props.selectedItems[0]) return '';
-  const selectedItem = props.selectedItems[0];
-  const id = selectedItem[props.itemKey];
-  return `${props.editRoute}/${id}`;
-});
+const canEdit = computed(() => props.selectedItems.length === 1);
 
 const onSearch = (value: string) => {
   emit('search', value);
 };
 
 const onDelete = () => {
-  const cleanItems = JSON.parse(JSON.stringify(props.selectedItems)) as Record<string, unknown>[];
+  const rawItems = toRaw(props.selectedItems);
+  const cleanItems = JSON.parse(JSON.stringify(rawItems)) as Record<string, unknown>[];
   emit('delete', cleanItems);
+};
+
+const onEdit = () => {
+  if (props.selectedItems[0]) {
+    const rawItem = toRaw(props.selectedItems[0]);
+    const cleanItem = JSON.parse(JSON.stringify(rawItem)) as Record<string, unknown>;
+    emit('edit', cleanItem);
+  }
 };
 
 const onBlur = () => {
