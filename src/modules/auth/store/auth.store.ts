@@ -72,10 +72,14 @@ export const useAuthStore = defineStore('auth', () => {
     const storedToken = localStorage.getItem(import.meta.env.VITE_ACCESS_TOKEN_KEY);
     const storedRefresh = localStorage.getItem(import.meta.env.VITE_REFRESH_TOKEN_KEY);
     const storedUser = localStorage.getItem(import.meta.env.VITE_USER_KEY);
-    if (storedToken && storedUser) {
-      accessToken.value = storedToken;
-      refreshToken.value = storedRefresh;
-      user.value = JSON.parse(storedUser);
+    if (storedToken && storedUser && storedUser !== 'undefined') {
+      try {
+        accessToken.value = storedToken;
+        refreshToken.value = storedRefresh;
+        user.value = JSON.parse(storedUser);
+      } catch {
+        clearAuth();
+      }
     }
   };
 

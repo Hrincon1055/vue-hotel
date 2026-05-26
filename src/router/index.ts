@@ -18,6 +18,11 @@ const router = createRouter({
           name: 'dashboard',
           component: () => import('@/modules/dashboard/views/DashboardView.vue'),
         },
+        {
+          path: '/employees',
+          name: 'employees-list',
+          component: () => import('@/modules/employees/views/EmployeesListView.vue'),
+        },
       ],
     },
     {

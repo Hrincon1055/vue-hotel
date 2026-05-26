@@ -13,6 +13,7 @@ import * as components from 'vuetify/components';
 import * as directives from 'vuetify/directives';
 import 'vuetify/styles';
 import App from './App.vue';
+import { queryClient } from './api/useApi';
 import './assets/main.css';
 import { useAuthStore } from './modules/auth/store/auth.store';
 import router from './router';
@@ -22,7 +23,7 @@ const vuetify = createVuetify({
   components,
   directives,
 });
-app.use(VueQueryPlugin);
+app.use(VueQueryPlugin, { queryClient });
 const pinia = createPinia();
 app.use(pinia);
 useAuthStore();

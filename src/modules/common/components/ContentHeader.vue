@@ -131,7 +131,8 @@ const onSearch = (value: string) => {
 };
 
 const onDelete = () => {
-  emit('delete', props.selectedItems);
+  const cleanItems = JSON.parse(JSON.stringify(props.selectedItems)) as Record<string, unknown>[];
+  emit('delete', cleanItems);
 };
 
 const onBlur = () => {
