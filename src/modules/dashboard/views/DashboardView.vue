@@ -13,7 +13,6 @@
       @search="onSearch"
       @delete="onDelete"
     />
-
     <DataTable
       v-model="selectedRooms"
       :columns="columns"
@@ -32,14 +31,15 @@
 </template>
 
 <script setup lang="ts">
+/**imports */
 import ContentHeader from '@/modules/common/components/ContentHeader.vue';
 import DataTable, { type TableColumn } from '@/modules/common/components/DataTable.vue';
 import DrawerPanel from '@/modules/common/components/DrawerPanel.vue';
 import { useDrawer } from '@/modules/common/composables/useDrawer';
-
 import { ref, watch } from 'vue';
+/**code */
 const { openDrawer } = useDrawer();
-// Columnas de la tabla
+
 const columns: TableColumn[] = [
   { key: 'floor', title: 'Floor', type: 'number' },
   { key: 'number', title: 'Number', type: 'number' },
@@ -50,19 +50,14 @@ const columns: TableColumn[] = [
   { key: 'createdAt', title: 'Date Created', type: 'date', visible: false },
 ];
 
-// Estado de paginación
 const page = ref(1);
 const itemsPerPage = ref(10);
-const totalItems = ref(23); // Total simulado del servidor
+const totalItems = ref(23);
 const searchQuery = ref('');
 const sortKey = ref('');
 const sortOrder = ref<'asc' | 'desc'>('asc');
-
-// Datos actuales (simulando respuesta del servidor)
 const rooms = ref<Record<string, unknown>[]>([]);
 const selectedRooms = ref<Record<string, unknown>[]>([]);
-
-// Simular datos del servidor
 const generateRooms = (page: number, perPage: number) => {
   const allRooms = [];
   const types = ['Single', 'Double', 'Suite', 'Deluxe'];
@@ -81,31 +76,15 @@ const generateRooms = (page: number, perPage: number) => {
     });
   }
 
-  // Simular paginación
   const start = (page - 1) * perPage;
   const end = start + perPage;
   return allRooms.slice(start, end);
 };
 
-// Función para cargar datos (simula llamada al API)
 const fetchData = () => {
-  console.log('Fetching data:', {
-    page: page.value,
-    itemsPerPage: itemsPerPage.value,
-    search: searchQuery.value,
-    sortKey: sortKey.value,
-    sortOrder: sortOrder.value,
-  });
-  // Aquí iría la llamada real al API:
-  // const response = await api.get('/rooms', { params: { page, limit: itemsPerPage, search, sortBy, sortOrder } });
-  // rooms.value = response.data.data;
-  // totalItems.value = response.data.meta.total;
-
-  // Simulación:
   rooms.value = generateRooms(page.value, itemsPerPage.value);
 };
 
-// Handlers de paginación
 const onPageChange = (newPage: number) => {
   page.value = newPage;
 };
@@ -128,22 +107,18 @@ const onSort = (key: string, order: 'asc' | 'desc') => {
 
 const onDelete = (items: Record<string, unknown>[]) => {
   console.log('Eliminar items:', items);
-  // Aquí iría la llamada al API para eliminar
-  // await api.delete('/rooms', { data: { ids: items.map(i => i.id) } });
-  // Limpiar selección y recargar
   selectedRooms.value = [];
   fetchData();
 };
 
 const onRowClick = (item: Record<string, unknown>) => {
-  console.log('edit item:', item);
+  console.log('Row clicked:', item);
   openDrawer({
     title: 'Detalles',
     props: { id: 123 },
   });
 };
 
-// Recargar datos cuando cambian los parámetros
 watch(
   [page, itemsPerPage, searchQuery, sortKey, sortOrder],
   () => {

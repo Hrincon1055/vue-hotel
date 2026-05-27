@@ -158,7 +158,7 @@
           density="compact"
           variant="outlined"
           hide-details
-          style="max-width: 80px"
+          style="max-width: 90px"
           @update:model-value="onItemsPerPageChange"
         ></v-select>
         <v-pagination
@@ -176,8 +176,9 @@
 </template>
 
 <script setup lang="ts">
+/**imports */
 import { computed, ref, watch } from 'vue';
-
+/**code */
 export interface TableColumn {
   key: string;
   title: string;
@@ -344,15 +345,19 @@ const getStatusColor = (status: unknown): string => {
 };
 
 const itemsPerPageOptions = [5, 10, 25, 50, 100];
+
 const totalPages = computed(() => Math.ceil(props.totalItems / props.itemsPerPage));
+
 const startItem = computed(() => {
   if (props.totalItems === 0) return 0;
   return (props.page - 1) * props.itemsPerPage + 1;
 });
+
 const endItem = computed(() => {
   const end = props.page * props.itemsPerPage;
   return Math.min(end, props.totalItems);
 });
+
 const onPageChange = (newPage: number) => {
   emit('update:page', newPage);
 };

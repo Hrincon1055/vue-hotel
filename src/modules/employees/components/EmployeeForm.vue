@@ -235,11 +235,11 @@ const handleSubmit = async () => {
       router.push('/employees');
     }
   } catch (error) {
+    console.error('Error:', error);
     showAlert({
       message: isEditMode.value ? 'Error al actualizar el empleado' : 'Error al crear el empleado',
       type: 'error',
     });
-    console.error('Error:', error);
   }
 };
 

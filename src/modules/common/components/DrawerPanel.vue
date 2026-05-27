@@ -17,7 +17,9 @@
 </template>
 
 <script setup lang="ts">
+/**imports */
 import { useDrawer } from '../composables/useDrawer';
+/**code */
 const { isOpen, width, component, componentProps, persistent, closeDrawer } = useDrawer();
 </script>
 

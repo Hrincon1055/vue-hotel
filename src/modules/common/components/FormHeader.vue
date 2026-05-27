@@ -42,6 +42,7 @@
 </template>
 
 <script setup lang="ts">
+/**code */
 defineProps<{
   title: string;
   subtitle: string;

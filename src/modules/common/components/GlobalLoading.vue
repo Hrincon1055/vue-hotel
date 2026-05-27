@@ -3,8 +3,9 @@
 </template>
 
 <script setup lang="ts">
+/**imports */
 import { useLoading } from '../composables/useLoading';
-
+/**code */
 const { isLoading } = useLoading();
 </script>
 

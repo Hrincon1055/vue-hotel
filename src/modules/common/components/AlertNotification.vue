@@ -15,7 +15,9 @@
 </template>
 
 <script setup lang="ts">
+/**imports */
 import { alertIcons, useAlert, type AlertType } from '../composables/useAlert';
+/**code */
 const { alertState, hideAlert } = useAlert();
 
 const alertColors: Record<AlertType, string> = {
