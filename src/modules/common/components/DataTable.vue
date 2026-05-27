@@ -100,7 +100,12 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="(item, index) in sortedData" :key="getItemKey(item, index)">
+        <tr
+          v-for="(item, index) in sortedData"
+          :key="getItemKey(item, index)"
+          class="table-row"
+          @click="onRowClick(item)"
+        >
           <td>
             <v-checkbox
               :model-value="isSelected(item)"
@@ -205,6 +210,7 @@ const emit = defineEmits<{
   'update:page': [value: number];
   'update:itemsPerPage': [value: number];
   sort: [key: string, order: 'asc' | 'desc'];
+  'row-click': [item: Record<string, unknown>];
 }>();
 
 const visibleColumns = ref<string[]>([]);
@@ -295,6 +301,10 @@ const toggleSelectAll = (value: boolean | null) => {
   emit('update:modelValue', selectedItems.value);
 };
 
+const onRowClick = (item: Record<string, unknown>) => {
+  emit('row-click', item);
+};
+
 const toggleColumn = (key: string) => {
   const index = visibleColumns.value.indexOf(key);
   if (index === -1) {
@@ -374,6 +384,15 @@ const onItemsPerPageChange = (newItemsPerPage: number) => {
 
 .data-table tr:last-child td {
   border-bottom: none;
+}
+
+.table-row {
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.table-row:hover {
+  background-color: rgba(var(--v-theme-primary), 0.04);
 }
 
 .column-header {

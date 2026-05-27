@@ -11,7 +11,6 @@
     item-key="id"
     @search="onSearch"
     @delete="onDelete"
-    @edit="onEdit"
   />
   <v-progress-linear v-if="isLoading" indeterminate color="primary" />
   <v-alert v-if="isError" type="error" variant="tonal" class="ma-4">
@@ -28,6 +27,7 @@
     @update:page="onPageChange"
     @update:items-per-page="onItemsPerPageChange"
     @sort="onSort"
+    @row-click="onEdit"
   >
     <template #[`item.role`]="{ value }">
       <v-chip :color="getRoleColor(value as string)" size="small" label>
