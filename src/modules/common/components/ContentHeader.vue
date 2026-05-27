@@ -51,7 +51,7 @@
         ></v-btn>
       </template>
     </v-tooltip>
-    <v-tooltip v-if="canEdit" text="Editar" location="bottom">
+    <!-- <v-tooltip v-if="canEdit" text="Editar" location="bottom">
       <template #activator="{ props: tooltipProps }">
         <v-btn
           v-bind="tooltipProps"
@@ -63,7 +63,7 @@
           @click="onEdit"
         ></v-btn>
       </template>
-    </v-tooltip>
+    </v-tooltip> -->
     <v-tooltip text="Crear item" location="bottom">
       <template #activator="{ props: tooltipProps }">
         <v-btn
@@ -101,7 +101,7 @@ const props = withDefaults(defineProps<Props>(), {
 const emit = defineEmits<{
   search: [value: string];
   delete: [items: Record<string, unknown>[]];
-  edit: [item: Record<string, unknown>];
+  // edit: [item: Record<string, unknown>];
 }>();
 
 const showSearch = ref(false);
@@ -115,7 +115,7 @@ const itemCountText = computed(() => {
 
 const hasSelection = computed(() => props.selectedItems.length > 0);
 
-const canEdit = computed(() => props.selectedItems.length === 1);
+// const canEdit = computed(() => props.selectedItems.length === 1);
 
 const onSearch = (value: string) => {
   emit('search', value);
@@ -127,13 +127,13 @@ const onDelete = () => {
   emit('delete', cleanItems);
 };
 
-const onEdit = () => {
-  if (props.selectedItems[0]) {
-    const rawItem = toRaw(props.selectedItems[0]);
-    const cleanItem = JSON.parse(JSON.stringify(rawItem)) as Record<string, unknown>;
-    emit('edit', cleanItem);
-  }
-};
+// const onEdit = () => {
+//   if (props.selectedItems[0]) {
+//     const rawItem = toRaw(props.selectedItems[0]);
+//     const cleanItem = JSON.parse(JSON.stringify(rawItem)) as Record<string, unknown>;
+//     emit('edit', cleanItem);
+//   }
+// };
 
 const onBlur = () => {
   if (!searchValue.value.trim()) {

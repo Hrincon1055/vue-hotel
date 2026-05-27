@@ -1,4 +1,5 @@
 <template>
+  <DrawerPanel />
   <ContentHeader
     title="Empleados"
     subtitle="Gestión de personal"
@@ -10,6 +11,7 @@
     item-key="id"
     @search="onSearch"
     @delete="onDelete"
+    @edit="onEdit"
   />
   <v-progress-linear v-if="isLoading" indeterminate color="primary" />
   <v-alert v-if="isError" type="error" variant="tonal" class="ma-4">
@@ -70,7 +72,10 @@
 import ContentHeader from '@/modules/common/components/ContentHeader.vue';
 import type { TableColumn } from '@/modules/common/components/DataTable.vue';
 import DataTable from '@/modules/common/components/DataTable.vue';
+import DrawerPanel from '@/modules/common/components/DrawerPanel.vue';
+import { useDrawer } from '@/modules/common/composables/useDrawer';
 import { computed, reactive, ref } from 'vue';
+import EmployeeForm from '../components/EmployeeForm.vue';
 import { useEmployees } from '../composables/useEmployees';
 import type { EmployeeFilters } from '../interfaces/employee.interface';
 
@@ -82,9 +87,10 @@ const filters = ref<EmployeeFilters>({
   sortOrder: 'desc',
 });
 
-// Composable de empleados
+// Composables
 const { employees, totalItems, isLoading, isError, removeMany, isDeletingMany } =
   useEmployees(filters);
+const { openDrawer } = useDrawer();
 
 // Estado local
 const selectedEmployees = ref<Record<string, unknown>[]>([]);
@@ -130,6 +136,17 @@ const onSort = (key: string, order: 'asc' | 'desc') => {
 const onDelete = (items: Record<string, unknown>[]) => {
   employeesToDelete.value = items;
   deleteDialog.value = true;
+};
+
+const onEdit = (item: Record<string, unknown>) => {
+  openDrawer({
+    title: 'Editar Empleado',
+    component: EmployeeForm,
+    props: {
+      employee: item,
+      inDrawer: true,
+    },
+  });
 };
 
 const confirmDelete = async () => {

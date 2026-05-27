@@ -12,7 +12,6 @@
       item-key="id"
       @search="onSearch"
       @delete="onDelete"
-      @edit="onEdit"
     />
 
     <DataTable
@@ -35,11 +34,10 @@
 import ContentHeader from '@/modules/common/components/ContentHeader.vue';
 import DataTable, { type TableColumn } from '@/modules/common/components/DataTable.vue';
 import DrawerPanel from '@/modules/common/components/DrawerPanel.vue';
-import PruebaComponent from '@/modules/common/components/PruebaComponent.vue';
-import { useDrawer } from '@/modules/common/composables/useDrawer';
+// import { useDrawer } from '@/modules/common/composables/useDrawer';
 
 import { ref, watch } from 'vue';
-const { openDrawer } = useDrawer();
+// const { openDrawer } = useDrawer();
 // Columnas de la tabla
 const columns: TableColumn[] = [
   { key: 'floor', title: 'Floor', type: 'number' },
@@ -136,14 +134,13 @@ const onDelete = (items: Record<string, unknown>[]) => {
   fetchData();
 };
 
-const onEdit = (item: Record<string, unknown>) => {
-  console.log('edit item:', item);
-  openDrawer({
-    title: 'Detalles',
-    component: PruebaComponent,
-    props: { id: 123 },
-  });
-};
+// const onEdit = (item: Record<string, unknown>) => {
+//   console.log('edit item:', item);
+//   openDrawer({
+//     title: 'Detalles',
+//     props: { id: 123 },
+//   });
+// };
 
 // Recargar datos cuando cambian los parámetros
 watch(

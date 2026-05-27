@@ -1,9 +1,9 @@
 <template>
-  <div>
-    <h1>Employee Form</h1>
-  </div>
+  <v-container fluid>
+    <EmployeeForm />
+  </v-container>
 </template>
 
-<script setup lang="ts"></script>
-
-<style scoped></style>
+<script setup lang="ts">
+import EmployeeForm from '../components/EmployeeForm.vue';
+</script>

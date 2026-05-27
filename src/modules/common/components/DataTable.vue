@@ -139,8 +139,6 @@
         </tr>
       </tbody>
     </v-table>
-
-    <!-- Paginación -->
     <div
       v-if="totalItems > 0"
       class="d-flex align-center justify-space-between pa-3 pagination-container"
@@ -189,7 +187,6 @@ interface Props {
   items: Record<string, unknown>[];
   itemKey?: string;
   modelValue?: Record<string, unknown>[];
-  // Paginación
   page?: number;
   itemsPerPage?: number;
   totalItems?: number;
@@ -210,7 +207,6 @@ const emit = defineEmits<{
   sort: [key: string, order: 'asc' | 'desc'];
 }>();
 
-// Estado
 const visibleColumns = ref<string[]>([]);
 const columnAlignments = ref<Record<string, string>>({});
 const sortKey = ref<string | null>(null);
@@ -218,12 +214,10 @@ const sortOrder = ref<'asc' | 'desc'>('asc');
 const columnSearch = ref('');
 const selectedItems = ref<Record<string, unknown>[]>([...props.modelValue]);
 
-// Inicializar columnas visibles
 watch(
   () => props.columns,
   (newColumns) => {
     visibleColumns.value = newColumns.filter((col) => col.visible !== false).map((col) => col.key);
-    // Inicializar alineaciones
     newColumns.forEach((col) => {
       if (col.align) {
         columnAlignments.value[col.key] = col.align;
@@ -233,7 +227,6 @@ watch(
   { immediate: true },
 );
 
-// Sincronizar selección con v-model
 watch(
   () => props.modelValue,
   (newValue) => {
@@ -241,22 +234,18 @@ watch(
   },
 );
 
-// Columnas mostradas
 const displayedColumns = computed(() =>
   props.columns.filter((col) => visibleColumns.value.includes(col.key)),
 );
 
-// Columnas filtradas para el menú
 const filteredColumns = computed(() => {
   const search = columnSearch.value.toLowerCase();
   if (!search) return props.columns;
   return props.columns.filter((col) => col.title.toLowerCase().includes(search));
 });
 
-// Datos ordenados
 const sortedData = computed(() => {
   if (!sortKey.value) return props.items;
-
   return [...props.items].sort((a, b) => {
     const aVal = a[sortKey.value!];
     const bVal = b[sortKey.value!];
@@ -268,7 +257,6 @@ const sortedData = computed(() => {
   });
 });
 
-// Selección
 const allSelected = computed(
   () => props.items.length > 0 && selectedItems.value.length === props.items.length,
 );
@@ -277,7 +265,6 @@ const someSelected = computed(
   () => selectedItems.value.length > 0 && selectedItems.value.length < props.items.length,
 );
 
-// Helpers
 const getItemKey = (item: Record<string, unknown>, index: number): string | number => {
   const key = item[props.itemKey];
   return (key as string | number) ?? index;
@@ -308,7 +295,6 @@ const toggleSelectAll = (value: boolean | null) => {
   emit('update:modelValue', selectedItems.value);
 };
 
-// Columnas
 const toggleColumn = (key: string) => {
   const index = visibleColumns.value.indexOf(key);
   if (index === -1) {
@@ -325,19 +311,16 @@ const hideColumn = (key: string) => {
   }
 };
 
-// Ordenamiento
 const sortColumn = (key: string, order: 'asc' | 'desc') => {
   sortKey.value = key;
   sortOrder.value = order;
   emit('sort', key, order);
 };
 
-// Alineación
 const setAlignment = (key: string, align: string) => {
   columnAlignments.value[key] = align;
 };
 
-// Color de status
 const getStatusColor = (status: unknown): string => {
   const statusColors: Record<string, string> = {
     Available: 'success',
@@ -350,28 +333,23 @@ const getStatusColor = (status: unknown): string => {
   return statusColors[String(status)] || 'default';
 };
 
-// Paginación
 const itemsPerPageOptions = [5, 10, 25, 50, 100];
-
 const totalPages = computed(() => Math.ceil(props.totalItems / props.itemsPerPage));
-
 const startItem = computed(() => {
   if (props.totalItems === 0) return 0;
   return (props.page - 1) * props.itemsPerPage + 1;
 });
-
 const endItem = computed(() => {
   const end = props.page * props.itemsPerPage;
   return Math.min(end, props.totalItems);
 });
-
 const onPageChange = (newPage: number) => {
   emit('update:page', newPage);
 };
 
 const onItemsPerPageChange = (newItemsPerPage: number) => {
   emit('update:itemsPerPage', newItemsPerPage);
-  emit('update:page', 1); // Reset a la primera página
+  emit('update:page', 1);
 };
 </script>
 
@@ -414,7 +392,6 @@ const onItemsPerPageChange = (newItemsPerPage: number) => {
 </style>
 
 <style>
-/* Estilos globales para menús slim */
 .slim-menu .v-list-item {
   min-height: 32px !important;
   padding: 4px 12px !important;
