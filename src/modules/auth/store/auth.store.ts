@@ -91,7 +91,6 @@ export const useAuthStore = defineStore('auth', () => {
     localStorage.removeItem(import.meta.env.VITE_USER_KEY);
   };
 
-  // Cargar estado inicial
   loadFromStorage();
 
   return {

@@ -106,7 +106,7 @@
           class="table-row"
           @click="onRowClick(item)"
         >
-          <td>
+          <td @click.stop>
             <v-checkbox
               :model-value="isSelected(item)"
               hide-details

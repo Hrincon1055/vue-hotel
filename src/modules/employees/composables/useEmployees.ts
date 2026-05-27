@@ -13,10 +13,10 @@ const QUERY_KEY = 'employees';
 export function useEmployees(filters: Ref<EmployeeFilters>) {
   const queryClient = useQueryClient();
 
-  // Query para obtener lista de empleados
   const {
     data: employeesData,
     isLoading,
+    isFetching,
     isError,
     error,
     refetch,
@@ -25,13 +25,11 @@ export function useEmployees(filters: Ref<EmployeeFilters>) {
     queryFn: () => employeesService.getAll(filters.value),
   });
 
-  // Computed para acceder a los datos
   const employees = computed(() => employeesData.value?.data ?? []);
   const meta = computed(() => employeesData.value?.meta);
   const totalItems = computed(() => meta.value?.total ?? 0);
   const totalPages = computed(() => meta.value?.totalPages ?? 0);
 
-  // Mutation para crear empleado
   const createMutation = useMutation({
     mutationFn: (employee: CreateEmployeeDto) => employeesService.create(employee),
     onSuccess: () => {
@@ -39,7 +37,6 @@ export function useEmployees(filters: Ref<EmployeeFilters>) {
     },
   });
 
-  // Mutation para actualizar empleado
   const updateMutation = useMutation({
     mutationFn: ({ id, data }: { id: string; data: UpdateEmployeeDto }) =>
       employeesService.update(id, data),
@@ -48,7 +45,6 @@ export function useEmployees(filters: Ref<EmployeeFilters>) {
     },
   });
 
-  // Mutation para eliminar empleado
   const deleteMutation = useMutation({
     mutationFn: (id: string) => employeesService.delete(id),
     onSuccess: () => {
@@ -56,7 +52,6 @@ export function useEmployees(filters: Ref<EmployeeFilters>) {
     },
   });
 
-  // Mutation para eliminar múltiples empleados
   const deleteManyMutation = useMutation({
     mutationFn: (ids: string[]) => employeesService.deleteMany(ids),
     onSuccess: () => {
@@ -64,7 +59,6 @@ export function useEmployees(filters: Ref<EmployeeFilters>) {
     },
   });
 
-  // Mutation para cambiar contraseña
   const changePasswordMutation = useMutation({
     mutationFn: ({ id, data }: { id: string; data: ChangePasswordDto }) =>
       employeesService.changePassword(id, data),
@@ -78,6 +72,7 @@ export function useEmployees(filters: Ref<EmployeeFilters>) {
     totalPages,
     // Estado
     isLoading,
+    isFetching,
     isError,
     error,
     // Acciones

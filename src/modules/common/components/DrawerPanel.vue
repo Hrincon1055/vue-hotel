@@ -9,7 +9,6 @@
     disable-route-watcher
     class="drawer-panel"
   >
-    <!-- Contenido del drawer -->
     <v-container fluid class="pa-4">
       <component v-if="component" :is="component" v-bind="componentProps" @close="closeDrawer" />
       <slot v-else />

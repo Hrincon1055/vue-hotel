@@ -28,7 +28,6 @@ export const useDrawerStore = defineStore('drawer', () => {
 
   const close = () => {
     isOpen.value = false;
-    // Limpiar después de la animación
     setTimeout(() => {
       title.value = '';
       component.value = null;

@@ -12,7 +12,7 @@
     @search="onSearch"
     @delete="onDelete"
   />
-  <v-progress-linear v-if="isLoading" indeterminate color="primary" />
+
   <v-alert v-if="isError" type="error" variant="tonal" class="ma-4">
     Error al cargar los empleados. Por favor, intenta de nuevo.
   </v-alert>
@@ -69,17 +69,19 @@
 </template>
 
 <script setup lang="ts">
+/**imports */
 import ContentHeader from '@/modules/common/components/ContentHeader.vue';
 import type { TableColumn } from '@/modules/common/components/DataTable.vue';
 import DataTable from '@/modules/common/components/DataTable.vue';
 import DrawerPanel from '@/modules/common/components/DrawerPanel.vue';
 import { useDrawer } from '@/modules/common/composables/useDrawer';
-import { computed, reactive, ref } from 'vue';
+import { useLoading } from '@/modules/common/composables/useLoading';
+import { computed, reactive, ref, watch } from 'vue';
 import EmployeeForm from '../components/EmployeeForm.vue';
 import { useEmployees } from '../composables/useEmployees';
 import type { EmployeeFilters } from '../interfaces/employee.interface';
 
-// Filtros reactivos
+/**code */
 const filters = ref<EmployeeFilters>({
   page: 1,
   limit: 10,
@@ -87,12 +89,21 @@ const filters = ref<EmployeeFilters>({
   sortOrder: 'desc',
 });
 
-// Composables
-const { employees, totalItems, isLoading, isError, removeMany, isDeletingMany } =
+const { employees, totalItems, isFetching, isError, removeMany, isDeletingMany } =
   useEmployees(filters);
 const { openDrawer } = useDrawer();
-
-// Estado local
+const { showLoading, hideLoading } = useLoading();
+watch(
+  isFetching,
+  (fetching) => {
+    if (fetching) {
+      showLoading();
+    } else {
+      hideLoading();
+    }
+  },
+  { immediate: true },
+);
 const selectedEmployees = ref<Record<string, unknown>[]>([]);
 const deleteDialog = ref(false);
 const employeesToDelete = ref<Record<string, unknown>[]>([]);
@@ -106,7 +117,6 @@ const tableItems = computed<Record<string, unknown>[]>(() => {
   return employees.value as unknown as Record<string, unknown>[];
 });
 
-// Columnas de la tabla
 const columns: TableColumn[] = [
   { key: 'firstName', title: 'Nombre', visible: true },
   { key: 'lastName', title: 'Apellido', visible: true },
@@ -116,7 +126,6 @@ const columns: TableColumn[] = [
   { key: 'createdAt', title: 'Creado', type: 'date', visible: true },
 ];
 
-// Handlers
 const onSearch = (value: string) => {
   filters.value = { ...filters.value, search: value, page: 1 };
 };
@@ -167,7 +176,6 @@ const showSnackbar = (message: string, color: string) => {
   snackbar.show = true;
 };
 
-// Helpers de formato
 const getRoleColor = (role: string): string => {
   const colors: Record<string, string> = {
     ADMIN: 'error',

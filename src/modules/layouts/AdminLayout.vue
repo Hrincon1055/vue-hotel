@@ -39,11 +39,6 @@
         <v-btn icon="mdi-bell"></v-btn>
         <v-btn icon="mdi-account-circle"></v-btn>
       </v-app-bar>
-      <!-- <v-container style="height: 100%">
-        <v-card-text>
-          The navigation drawer will appear from the bottom on smaller size screens.
-        </v-card-text>
-      </v-container> -->
       <router-view />
     </v-main>
   </v-layout>
