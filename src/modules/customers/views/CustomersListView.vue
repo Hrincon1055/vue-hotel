@@ -37,6 +37,22 @@
     <template #[`item.createdAt`]="{ value }">
       {{ formatDate(value as string) }}
     </template>
+    <template #[`item.actions`]="{ item }">
+      <v-tooltip text="Ver reservaciones" location="top">
+        <template #activator="{ props: tooltipProps }">
+          <v-btn
+            v-bind="tooltipProps"
+            icon
+            size="small"
+            variant="text"
+            color="primary"
+            @click.stop="goToReservations(item)"
+          >
+            <v-icon>mdi-calendar-clock</v-icon>
+          </v-btn>
+        </template>
+      </v-tooltip>
+    </template>
   </data-table>
   <v-dialog v-model="deleteDialog" max-width="400">
     <v-card>
@@ -70,6 +86,7 @@ import DrawerPanel from '@/modules/common/components/DrawerPanel.vue';
 import { useDrawer } from '@/modules/common/composables/useDrawer';
 import { useLoading } from '@/modules/common/composables/useLoading';
 import { computed, reactive, ref, watch } from 'vue';
+import { useRouter } from 'vue-router';
 import CustomerForm from '../components/CustomerForm.vue';
 import { useCustomers } from '../composables/useCustomers';
 import type { CustomerFilters } from '../interfaces/customer.interface';
@@ -110,6 +127,8 @@ const tableItems = computed<Record<string, unknown>[]>(() => {
   return customers.value as unknown as Record<string, unknown>[];
 });
 
+const router = useRouter();
+
 const columns: TableColumn[] = [
   { key: 'firstName', title: 'Nombre', visible: true },
   { key: 'lastName', title: 'Apellido', visible: true },
@@ -119,6 +138,7 @@ const columns: TableColumn[] = [
   { key: 'documentNumber', title: 'N° Documento', visible: true },
   { key: 'nationality', title: 'Nacionalidad', visible: true },
   { key: 'createdAt', title: 'Creado', type: 'date', visible: true },
+  { key: 'actions', title: 'Acciones', visible: true },
 ];
 
 const onSearch = (value: string) => {
@@ -198,6 +218,10 @@ const formatDate = (dateString: string): string => {
     month: 'short',
     day: 'numeric',
   });
+};
+
+const goToReservations = (item: Record<string, unknown>) => {
+  router.push({ name: 'customers-reservations', params: { id: item.id as string } });
 };
 </script>
 

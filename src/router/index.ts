@@ -45,9 +45,9 @@ const router = createRouter({
           component: () => import('@/modules/customers/views/CustomerDetailView.vue'),
         },
         {
-          path: '/customers/:id/edit',
-          name: 'customers-edit',
-          component: () => import('@/modules/customers/views/CustomerFormView.vue'),
+          path: '/customers/:id/reservations',
+          name: 'customers-reservations',
+          component: () => import('@/modules/customers/views/CustomerReservationsView.vue'),
         },
       ],
     },

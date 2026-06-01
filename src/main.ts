@@ -11,6 +11,7 @@ import { createApp } from 'vue';
 import { createVuetify } from 'vuetify';
 import * as components from 'vuetify/components';
 import * as directives from 'vuetify/directives';
+import { VDateInput } from 'vuetify/labs/VDateInput';
 import 'vuetify/styles';
 import App from './App.vue';
 import { queryClient } from './api/useApi';
@@ -20,7 +21,10 @@ import router from './router';
 const app = createApp(App);
 
 const vuetify = createVuetify({
-  components,
+  components: {
+    ...components,
+    VDateInput,
+  },
   directives,
 });
 app.use(VueQueryPlugin, { queryClient });

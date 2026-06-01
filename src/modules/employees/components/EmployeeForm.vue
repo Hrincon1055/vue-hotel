@@ -5,7 +5,7 @@
       isEditMode ? 'Modifica los detalles del empleado' : 'Ingresa los detalles del nuevo empleado'
     "
     :is-saving="isCreating || isUpdating"
-    :is-valid="isValid"
+    :is-valid="!!isValid"
     @cancel="handleCancel"
     @save="handleSubmit"
   />
@@ -100,7 +100,7 @@ import { capitalize, normalizeEmail } from '@/helpers/utils';
 import FormHeader from '@/modules/common/components/FormHeader.vue';
 import { useAlert } from '@/modules/common/composables/useAlert';
 import { useDrawerStore } from '@/modules/common/store/drawer.store';
-import { computed, onMounted, ref, watch } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { useEmployees } from '../composables/useEmployees';
 /**code */
@@ -188,17 +188,6 @@ watch(
   },
   { immediate: true },
 );
-
-onMounted(() => {
-  if (props.inDrawer) {
-    drawerStore.$patch({
-      componentProps: {
-        ...drawerStore.componentProps,
-        _saveHandler: handleSubmit,
-      },
-    });
-  }
-});
 
 const handleSubmit = async () => {
   if (!formRef.value) return;

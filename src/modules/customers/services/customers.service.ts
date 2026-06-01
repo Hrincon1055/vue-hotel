@@ -4,6 +4,7 @@ import type {
   CreateCustomerDto,
   Customer,
   CustomerFilters,
+  CustomerReservation,
   PaginatedResponse,
   UpdateCustomerDto,
 } from '../interfaces/customer.interface';
@@ -58,8 +59,10 @@ export const customersService = {
     return data.data;
   },
 
-  async getReservations(id: string): Promise<unknown[]> {
-    const { data } = await api.get<Response<unknown[]>>(`${BASE_URL}/${id}/reservations`);
+  async getReservations(id: string): Promise<CustomerReservation[]> {
+    const { data } = await api.get<Response<CustomerReservation[]>>(
+      `${BASE_URL}/${id}/reservations`,
+    );
     return data.data;
   },
 };

@@ -1,5 +1,35 @@
 export type DocumentType = 'PASSPORT' | 'NATIONAL_ID' | 'DRIVERS_LICENSE' | 'OTHER';
 
+export type ReservationStatus =
+  | 'PENDING'
+  | 'CONFIRMED'
+  | 'CHECKED_IN'
+  | 'CHECKED_OUT'
+  | 'CANCELLED'
+  | 'NO_SHOW';
+
+export interface CustomerReservation {
+  id: string;
+  code: string;
+  roomId: string;
+  room?: {
+    id: string;
+    number: string;
+    type: string;
+  };
+  checkInDate: string;
+  checkOutDate: string;
+  actualCheckIn?: string;
+  actualCheckOut?: string;
+  adults: number;
+  children: number;
+  status: ReservationStatus;
+  totalAmount: number;
+  notes?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface Customer {
   id: string;
   firstName: string;
