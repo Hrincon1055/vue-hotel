@@ -28,6 +28,27 @@ const router = createRouter({
           name: 'employees-new',
           component: () => import('@/modules/employees/views/EmployeeFormView.vue'),
         },
+        // Customers routes
+        {
+          path: '/customers',
+          name: 'customers-list',
+          component: () => import('@/modules/customers/views/CustomersListView.vue'),
+        },
+        {
+          path: '/customers/new',
+          name: 'customers-create',
+          component: () => import('@/modules/customers/views/CustomerFormView.vue'),
+        },
+        {
+          path: '/customers/:id',
+          name: 'customers-detail',
+          component: () => import('@/modules/customers/views/CustomerDetailView.vue'),
+        },
+        {
+          path: '/customers/:id/edit',
+          name: 'customers-edit',
+          component: () => import('@/modules/customers/views/CustomerFormView.vue'),
+        },
       ],
     },
     {

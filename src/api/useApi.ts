@@ -120,8 +120,9 @@ api.interceptors.response.use(
       const errorMessage = getErrorMessage(error);
       const status = error.response?.status;
 
-      // No mostrar alerta para 401 que serán manejados por el redirect
-      if (status !== 401) {
+      // Mostrar alerta para errores de autenticación en rutas de auth
+      // o para cualquier otro error que no sea 401 fuera de rutas de auth
+      if (isAuthRoute || status !== 401) {
         if (status && status >= 400 && status < 500) {
           showWarning(errorMessage);
         } else {
@@ -155,17 +156,32 @@ api.interceptors.response.use(
         { refreshToken },
         { headers: { 'Content-Type': 'application/json' } },
       );
-      const { accessToken, refreshToken: newRefreshToken, employee } = response.data.data;
+
+      // Extraer datos de la respuesta (puede venir en data.data o directamente en data)
+      const responseData = response.data?.data || response.data;
+      const { accessToken, refreshToken: newRefreshToken, employee } = responseData;
+
+      // Verificar que los tokens sean válidos
+      if (!accessToken || !newRefreshToken) {
+        throw new Error('Respuesta de refresh inválida');
+      }
+
       // Guardar nuevos tokens
       localStorage.setItem(import.meta.env.VITE_ACCESS_TOKEN_KEY, accessToken);
       localStorage.setItem(import.meta.env.VITE_REFRESH_TOKEN_KEY, newRefreshToken);
-      localStorage.setItem(import.meta.env.VITE_USER_KEY, JSON.stringify(employee));
+
+      // Solo guardar employee si es válido
+      if (employee && typeof employee === 'object') {
+        localStorage.setItem(import.meta.env.VITE_USER_KEY, JSON.stringify(employee));
+      }
+
       // Actualizar header de la petición original
       originalRequest.headers.Authorization = `Bearer ${accessToken}`;
       // Procesar cola de peticiones pendientes
       processQueue(null, accessToken);
       return api(originalRequest);
     } catch (refreshError) {
+      console.error('Error refreshing token:', refreshError);
       processQueue(refreshError as Error, null);
       showError('Tu sesión ha expirado. Por favor inicia sesión nuevamente.');
       clearSession();

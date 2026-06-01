@@ -23,10 +23,10 @@
           to="/employees"
         ></v-list-item>
         <v-list-item
-          prepend-icon="mdi-bed"
-          title="Habitaciones"
-          value="rooms"
-          to="/rooms"
+          prepend-icon="mdi-account-group"
+          title="Clientes"
+          value="customers"
+          to="/customers"
         ></v-list-item>
       </v-list>
     </v-navigation-drawer>

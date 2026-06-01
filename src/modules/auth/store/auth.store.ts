@@ -71,14 +71,26 @@ export const useAuthStore = defineStore('auth', () => {
     const storedToken = localStorage.getItem(import.meta.env.VITE_ACCESS_TOKEN_KEY);
     const storedRefresh = localStorage.getItem(import.meta.env.VITE_REFRESH_TOKEN_KEY);
     const storedUser = localStorage.getItem(import.meta.env.VITE_USER_KEY);
-    if (storedToken && storedUser && storedUser !== 'undefined') {
+
+    // Verificar que los datos existan y sean válidos
+    if (storedToken && storedUser && storedUser !== 'undefined' && storedUser !== 'null') {
       try {
-        accessToken.value = storedToken;
-        refreshToken.value = storedRefresh;
-        user.value = JSON.parse(storedUser);
+        const parsedUser = JSON.parse(storedUser);
+        // Verificar que el usuario tenga las propiedades mínimas requeridas
+        if (parsedUser?.id && parsedUser?.email) {
+          accessToken.value = storedToken;
+          refreshToken.value = storedRefresh;
+          user.value = parsedUser;
+        } else {
+          // Usuario inválido, limpiar sesión
+          clearAuth();
+        }
       } catch {
         clearAuth();
       }
+    } else if (storedToken && (!storedUser || storedUser === 'null')) {
+      // Hay token pero no hay usuario válido, limpiar todo
+      clearAuth();
     }
   };
 

@@ -5,8 +5,15 @@ import type { EmployeeRole } from '../interfaces/auth.interface';
  * Obtiene el usuario del localStorage
  */
 const getUser = () => {
-  const userStr = localStorage.getItem('user');
-  return userStr ? JSON.parse(userStr) : null;
+  const userStr = localStorage.getItem(import.meta.env.VITE_USER_KEY);
+  if (!userStr || userStr === 'null' || userStr === 'undefined') return null;
+  try {
+    const user = JSON.parse(userStr);
+    // Verificar que el usuario tenga las propiedades mínimas
+    return user?.id && user?.email ? user : null;
+  } catch {
+    return null;
+  }
 };
 
 /**
@@ -19,8 +26,13 @@ export const requireAuth = (
   next: NavigationGuardNext,
 ) => {
   const token = localStorage.getItem(import.meta.env.VITE_ACCESS_TOKEN_KEY);
+  const user = getUser();
 
-  if (!token) {
+  if (!token || !user) {
+    // Limpiar cualquier dato residual
+    localStorage.removeItem(import.meta.env.VITE_ACCESS_TOKEN_KEY);
+    localStorage.removeItem(import.meta.env.VITE_REFRESH_TOKEN_KEY);
+    localStorage.removeItem(import.meta.env.VITE_USER_KEY);
     next({ name: 'login' });
   } else {
     next();
