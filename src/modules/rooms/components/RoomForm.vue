@@ -24,14 +24,17 @@
         />
       </v-col>
       <v-col cols="12" sm="6">
-        <v-text-field
-          v-model.number="form.floor"
+        <v-number-input
+          v-model="form.floor"
           label="Piso"
-          type="number"
           :rules="[rules.required, rules.minValue(1)]"
+          :reverse="false"
+          control-variant="split"
+          :hide-input="false"
+          :min="1"
+          inset
           variant="solo"
           density="comfortable"
-          prepend-inner-icon="mdi-stairs"
         />
       </v-col>
       <v-col cols="12" sm="6">
@@ -57,26 +60,28 @@
         />
       </v-col>
       <v-col cols="12" sm="6">
-        <v-text-field
-          v-model.number="form.pricePerNight"
+        <v-number-input
+          v-model="form.pricePerNight"
           label="Precio por Noche"
-          type="number"
           :rules="[rules.required, rules.minValue(0)]"
+          :precision="0"
+          :min="0"
           variant="solo"
           density="comfortable"
-          prepend-inner-icon="mdi-currency-usd"
-          prefix="$"
+          prefix="COP $"
         />
       </v-col>
       <v-col cols="12" sm="6">
-        <v-text-field
-          v-model.number="form.capacity"
+        <v-number-input
+          v-model="form.capacity"
           label="Capacidad"
-          type="number"
           :rules="[rules.required, rules.minValue(1)]"
+          :reverse="false"
+          control-variant="split"
+          :hide-input="false"
+          inset
           variant="solo"
           density="comfortable"
-          prepend-inner-icon="mdi-account-group"
         />
       </v-col>
       <v-col cols="12">
@@ -260,14 +265,8 @@ const handleSubmit = async () => {
     } else {
       router.push('/rooms');
     }
-  } catch (error) {
-    console.error('Error:', error);
-    showAlert({
-      message: isEditMode.value
-        ? 'Error al actualizar la habitación'
-        : 'Error al crear la habitación',
-      type: 'error',
-    });
+  } catch {
+    // El interceptor de Axios ya muestra el mensaje de error del API
   }
 };
 

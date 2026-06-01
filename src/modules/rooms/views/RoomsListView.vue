@@ -42,9 +42,7 @@
         {{ getStatusLabel(value as string) }}
       </v-chip>
     </template>
-    <template #[`item.pricePerNight`]="{ value }">
-      ${{ Number(value || 0).toFixed(2) }}
-    </template>
+    <template #[`item.pricePerNight`]="{ value }"> ${{ Number(value || 0).toFixed(2) }} </template>
     <template #[`item.capacity`]="{ value }">
       <v-icon size="small" class="mr-1">mdi-account</v-icon>
       {{ value }}
