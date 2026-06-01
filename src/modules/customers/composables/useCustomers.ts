@@ -9,6 +9,33 @@ import { customersService } from '../services/customers.service';
 
 const QUERY_KEY = 'customers';
 
+// Composable solo para mutaciones (sin query) - usar en formularios
+export function useCustomerMutations() {
+  const queryClient = useQueryClient();
+
+  const createMutation = useMutation({
+    mutationFn: (customer: CreateCustomerDto) => customersService.create(customer),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEY] });
+    },
+  });
+
+  const updateMutation = useMutation({
+    mutationFn: ({ id, data }: { id: string; data: UpdateCustomerDto }) =>
+      customersService.update(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEY] });
+    },
+  });
+
+  return {
+    create: createMutation.mutateAsync,
+    update: updateMutation.mutateAsync,
+    isCreating: createMutation.isPending,
+    isUpdating: updateMutation.isPending,
+  };
+}
+
 export function useCustomers(filters: Ref<CustomerFilters>) {
   const queryClient = useQueryClient();
 

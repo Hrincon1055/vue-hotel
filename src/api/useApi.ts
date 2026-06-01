@@ -8,7 +8,7 @@ const { showError, showWarning } = useAlert();
 
 // Interfaz para respuestas de error del API
 interface ApiErrorResponse {
-  message?: string;
+  message?: string | string[];
   error?: string;
   statusCode?: number;
 }
@@ -19,7 +19,13 @@ const getErrorMessage = (error: AxiosError<ApiErrorResponse>): string => {
   if (error.response?.data) {
     const data = error.response.data;
     if (typeof data === 'string') return data;
-    if (data.message) return data.message;
+    if (data.message) {
+      // Manejar mensaje como array o string
+      if (Array.isArray(data.message)) {
+        return data.message.join(', ');
+      }
+      return data.message;
+    }
     if (data.error) return data.error;
   }
 

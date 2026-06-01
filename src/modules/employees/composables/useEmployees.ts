@@ -10,6 +10,33 @@ import { employeesService } from '../services/employees.service';
 
 const QUERY_KEY = 'employees';
 
+// Composable solo para mutaciones (sin query) - usar en formularios
+export function useEmployeeMutations() {
+  const queryClient = useQueryClient();
+
+  const createMutation = useMutation({
+    mutationFn: (employee: CreateEmployeeDto) => employeesService.create(employee),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEY] });
+    },
+  });
+
+  const updateMutation = useMutation({
+    mutationFn: ({ id, data }: { id: string; data: UpdateEmployeeDto }) =>
+      employeesService.update(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEY] });
+    },
+  });
+
+  return {
+    create: createMutation.mutateAsync,
+    update: updateMutation.mutateAsync,
+    isCreating: createMutation.isPending,
+    isUpdating: updateMutation.isPending,
+  };
+}
+
 export function useEmployees(filters: Ref<EmployeeFilters>) {
   const queryClient = useQueryClient();
 

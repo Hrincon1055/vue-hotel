@@ -18,23 +18,23 @@
           v-model="form.number"
           label="Número de Habitación"
           :rules="[rules.required]"
+          :readonly="isEditMode"
+          :hint="isEditMode ? 'No se puede modificar' : ''"
+          :persistent-hint="isEditMode"
           variant="solo"
           density="comfortable"
           prepend-inner-icon="mdi-door"
         />
       </v-col>
       <v-col cols="12" sm="6">
-        <v-number-input
-          v-model="form.floor"
+        <v-text-field
+          v-model.number="form.floor"
           label="Piso"
+          type="number"
           :rules="[rules.required, rules.minValue(1)]"
-          :reverse="false"
-          control-variant="split"
-          :hide-input="false"
-          :min="1"
-          inset
           variant="solo"
           density="comfortable"
+          prepend-inner-icon="mdi-stairs"
         />
       </v-col>
       <v-col cols="12" sm="6">
@@ -60,28 +60,26 @@
         />
       </v-col>
       <v-col cols="12" sm="6">
-        <v-number-input
-          v-model="form.pricePerNight"
+        <v-text-field
+          v-model.number="form.pricePerNight"
           label="Precio por Noche"
+          type="number"
           :rules="[rules.required, rules.minValue(0)]"
-          :precision="0"
-          :min="0"
           variant="solo"
           density="comfortable"
+          prepend-inner-icon="mdi-currency-usd"
           prefix="COP $"
         />
       </v-col>
       <v-col cols="12" sm="6">
-        <v-number-input
-          v-model="form.capacity"
+        <v-text-field
+          v-model.number="form.capacity"
           label="Capacidad"
+          type="number"
           :rules="[rules.required, rules.minValue(1)]"
-          :reverse="false"
-          control-variant="split"
-          :hide-input="false"
-          inset
           variant="solo"
           density="comfortable"
+          prepend-inner-icon="mdi-account-group"
         />
       </v-col>
       <v-col cols="12">
@@ -118,11 +116,10 @@ import { useAlert } from '@/modules/common/composables/useAlert';
 import { useDrawerStore } from '@/modules/common/store/drawer.store';
 import { computed, ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
-import { useRooms } from '../composables/useRooms';
+import { useRoomMutations } from '../composables/useRooms';
 import type {
   CreateRoomDto,
   Room,
-  RoomFilters,
   RoomStatus,
   RoomType,
   UpdateRoomDto,
@@ -139,8 +136,7 @@ const emit = defineEmits<{
 }>();
 
 const router = useRouter();
-const filters = ref<RoomFilters>({});
-const { create, update, isCreating, isUpdating } = useRooms(filters);
+const { create, update, isCreating, isUpdating } = useRoomMutations();
 const drawerStore = useDrawerStore();
 const { showAlert } = useAlert();
 const formRef = ref();
@@ -233,7 +229,6 @@ const handleSubmit = async () => {
   try {
     if (isEditMode.value && props.room) {
       const updateData: UpdateRoomDto = {
-        number: form.value.number,
         floor: form.value.floor,
         type: form.value.type,
         status: form.value.status,

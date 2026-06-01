@@ -102,12 +102,11 @@ import { useAlert } from '@/modules/common/composables/useAlert';
 import { useDrawerStore } from '@/modules/common/store/drawer.store';
 import { computed, ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
-import { useEmployees } from '../composables/useEmployees';
+import { useEmployeeMutations } from '../composables/useEmployees';
 /**code */
 import type {
   CreateEmployeeDto,
   Employee,
-  EmployeeFilters,
   EmployeeRole,
   EmployeeStatus,
   UpdateEmployeeDto,
@@ -124,8 +123,7 @@ const emit = defineEmits<{
 }>();
 
 const router = useRouter();
-const filters = ref<EmployeeFilters>({});
-const { create, update, isCreating, isUpdating } = useEmployees(filters);
+const { create, update, isCreating, isUpdating } = useEmployeeMutations();
 const drawerStore = useDrawerStore();
 const { showAlert } = useAlert();
 const formRef = ref();
@@ -223,12 +221,8 @@ const handleSubmit = async () => {
     } else {
       router.push('/employees');
     }
-  } catch (error) {
-    console.error('Error:', error);
-    showAlert({
-      message: isEditMode.value ? 'Error al actualizar el empleado' : 'Error al crear el empleado',
-      type: 'error',
-    });
+  } catch {
+    // El interceptor de Axios ya muestra el mensaje de error del API
   }
 };
 

@@ -112,11 +112,10 @@ import { useAlert } from '@/modules/common/composables/useAlert';
 import { useDrawerStore } from '@/modules/common/store/drawer.store';
 import { computed, ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
-import { useCustomers } from '../composables/useCustomers';
+import { useCustomerMutations } from '../composables/useCustomers';
 import type {
   CreateCustomerDto,
   Customer,
-  CustomerFilters,
   DocumentType,
   UpdateCustomerDto,
 } from '../interfaces/customer.interface';
@@ -132,8 +131,7 @@ const emit = defineEmits<{
 }>();
 
 const router = useRouter();
-const filters = ref<CustomerFilters>({});
-const { create, update, isCreating, isUpdating } = useCustomers(filters);
+const { create, update, isCreating, isUpdating } = useCustomerMutations();
 const drawerStore = useDrawerStore();
 const { showAlert } = useAlert();
 const formRef = ref();
@@ -238,12 +236,8 @@ const handleSubmit = async () => {
     } else {
       router.push('/customers');
     }
-  } catch (error) {
-    console.error('Error:', error);
-    showAlert({
-      message: isEditMode.value ? 'Error al actualizar el cliente' : 'Error al crear el cliente',
-      type: 'error',
-    });
+  } catch {
+    // El interceptor de Axios ya muestra el mensaje de error del API
   }
 };
 

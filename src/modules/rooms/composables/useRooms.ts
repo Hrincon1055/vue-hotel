@@ -10,6 +10,33 @@ import { roomsService } from '../services/rooms.service';
 
 const QUERY_KEY = 'rooms';
 
+// Composable solo para mutaciones (sin query) - usar en formularios
+export function useRoomMutations() {
+  const queryClient = useQueryClient();
+
+  const createMutation = useMutation({
+    mutationFn: (room: CreateRoomDto) => roomsService.create(room),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEY] });
+    },
+  });
+
+  const updateMutation = useMutation({
+    mutationFn: ({ id, data }: { id: string; data: UpdateRoomDto }) =>
+      roomsService.update(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEY] });
+    },
+  });
+
+  return {
+    create: createMutation.mutateAsync,
+    update: updateMutation.mutateAsync,
+    isCreating: createMutation.isPending,
+    isUpdating: updateMutation.isPending,
+  };
+}
+
 export function useRooms(filters: Ref<RoomFilters>) {
   const queryClient = useQueryClient();
 
