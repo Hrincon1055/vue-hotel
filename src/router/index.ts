@@ -49,6 +49,27 @@ const router = createRouter({
           name: 'customers-reservations',
           component: () => import('@/modules/customers/views/CustomerReservationsView.vue'),
         },
+        // Rooms routes
+        {
+          path: '/rooms',
+          name: 'rooms-list',
+          component: () => import('@/modules/rooms/views/RoomsListView.vue'),
+        },
+        {
+          path: '/rooms/new',
+          name: 'rooms-create',
+          component: () => import('@/modules/rooms/views/RoomFormView.vue'),
+        },
+        {
+          path: '/rooms/:id',
+          name: 'rooms-detail',
+          component: () => import('@/modules/rooms/views/RoomDetailView.vue'),
+        },
+        {
+          path: '/rooms/:id/edit',
+          name: 'rooms-edit',
+          component: () => import('@/modules/rooms/views/RoomFormView.vue'),
+        },
       ],
     },
     {

@@ -28,6 +28,12 @@
           value="customers"
           to="/customers"
         ></v-list-item>
+        <v-list-item
+          prepend-icon="mdi-bed"
+          title="Habitaciones"
+          value="rooms"
+          to="/rooms"
+        ></v-list-item>
       </v-list>
     </v-navigation-drawer>
     <v-main>
