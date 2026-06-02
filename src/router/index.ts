@@ -70,6 +70,27 @@ const router = createRouter({
           name: 'rooms-edit',
           component: () => import('@/modules/rooms/views/RoomFormView.vue'),
         },
+        // Reservations routes
+        {
+          path: '/reservations',
+          name: 'reservations-list',
+          component: () => import('@/modules/reservations/views/ReservationsListView.vue'),
+        },
+        {
+          path: '/reservations/new',
+          name: 'reservations-create',
+          component: () => import('@/modules/reservations/views/ReservationFormView.vue'),
+        },
+        {
+          path: '/reservations/:id',
+          name: 'reservations-detail',
+          component: () => import('@/modules/reservations/views/ReservationDetailView.vue'),
+        },
+        {
+          path: '/reservations/:id/edit',
+          name: 'reservations-edit',
+          component: () => import('@/modules/reservations/views/ReservationFormView.vue'),
+        },
       ],
     },
     {

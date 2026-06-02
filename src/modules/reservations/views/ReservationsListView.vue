@@ -1,23 +1,23 @@
 <template>
   <DrawerPanel />
   <ContentHeader
-    title="Habitaciones"
-    subtitle="Gestión de habitaciones"
-    icon="mdi-bed"
+    title="Reservaciones"
+    subtitle="Gestión de reservas"
+    icon="mdi-calendar-check"
     :item-count="totalItems"
-    :selected-items="selectedRooms"
-    create-route="/rooms/new"
-    edit-route="/rooms"
+    :selected-items="selectedReservations"
+    create-route="/reservations/new"
+    edit-route="/reservations"
     item-key="id"
     @search="onSearch"
     @delete="onDelete"
   />
 
   <v-alert v-if="isError" type="error" variant="tonal" class="ma-4">
-    Error al cargar las habitaciones. Por favor, intenta de nuevo.
+    Error al cargar las reservaciones. Por favor, intenta de nuevo.
   </v-alert>
   <data-table
-    v-model="selectedRooms"
+    v-model="selectedReservations"
     :columns="columns"
     :items="tableItems"
     :page="filters.page"
@@ -29,23 +29,25 @@
     @sort="onSort"
     @row-click="onEdit"
   >
-    <template #[`item.number`]="{ value }">
-      <span class="font-weight-medium">{{ value }}</span>
+    <template #[`item.customer`]="{ item }">
+      {{ getCustomerName(item) }}
     </template>
-    <template #[`item.type`]="{ value }">
-      <v-chip :color="getTypeColor(value as string)" size="small" label>
-        {{ getTypeLabel(value as string) }}
-      </v-chip>
+    <template #[`item.room`]="{ item }">
+      {{ getRoomNumber(item) }}
     </template>
     <template #[`item.status`]="{ value }">
       <v-chip :color="getStatusColor(value as string)" size="small" label>
         {{ getStatusLabel(value as string) }}
       </v-chip>
     </template>
-    <template #[`item.pricePerNight`]="{ value }"> ${{ Number(value || 0).toFixed(2) }} </template>
-    <template #[`item.capacity`]="{ value }">
-      <v-icon size="small" class="mr-1">mdi-account</v-icon>
-      {{ value }}
+    <template #[`item.checkInDate`]="{ value }">
+      {{ formatDate(value as string) }}
+    </template>
+    <template #[`item.checkOutDate`]="{ value }">
+      {{ formatDate(value as string) }}
+    </template>
+    <template #[`item.totalAmount`]="{ value }">
+      {{ formatCurrency(value as number) }}
     </template>
     <template #[`item.createdAt`]="{ value }">
       {{ formatDate(value as string) }}
@@ -57,7 +59,9 @@
       <v-card-text>
         ¿Estás seguro de que deseas eliminar
         {{
-          roomsToDelete.length === 1 ? 'esta habitación' : `${roomsToDelete.length} habitaciones`
+          reservationsToDelete.length === 1
+            ? 'esta reservación'
+            : `${reservationsToDelete.length} reservaciones`
         }}? Esta acción no se puede deshacer.
       </v-card-text>
       <v-card-actions>
@@ -83,19 +87,20 @@ import DrawerPanel from '@/modules/common/components/DrawerPanel.vue';
 import { useDrawer } from '@/modules/common/composables/useDrawer';
 import { useLoading } from '@/modules/common/composables/useLoading';
 import { computed, reactive, ref, watch } from 'vue';
-import RoomForm from '../components/RoomForm.vue';
-import { useRooms } from '../composables/useRooms';
-import type { RoomFilters } from '../interfaces/room.interface';
+import ReservationForm from '../components/ReservationForm.vue';
+import { useReservations } from '../composables/useReservations';
+import type { ReservationFilters } from '../interfaces/reservation.interface';
 
 /**code */
-const filters = ref<RoomFilters>({
+const filters = ref<ReservationFilters>({
   page: 1,
   limit: 10,
   sortBy: 'createdAt',
   sortOrder: 'desc',
 });
 
-const { rooms, totalItems, isFetching, isError, removeMany, isDeletingMany } = useRooms(filters);
+const { reservations, totalItems, isFetching, isError, removeMany, isDeletingMany } =
+  useReservations(filters);
 const { openDrawer } = useDrawer();
 const { showLoading, hideLoading } = useLoading();
 
@@ -111,9 +116,9 @@ watch(
   { immediate: true },
 );
 
-const selectedRooms = ref<Record<string, unknown>[]>([]);
+const selectedReservations = ref<Record<string, unknown>[]>([]);
 const deleteDialog = ref(false);
-const roomsToDelete = ref<Record<string, unknown>[]>([]);
+const reservationsToDelete = ref<Record<string, unknown>[]>([]);
 const snackbar = reactive({
   show: false,
   message: '',
@@ -121,16 +126,17 @@ const snackbar = reactive({
 });
 
 const tableItems = computed<Record<string, unknown>[]>(() => {
-  return rooms.value as unknown as Record<string, unknown>[];
+  return reservations.value as unknown as Record<string, unknown>[];
 });
 
 const columns: TableColumn[] = [
-  { key: 'number', title: 'Número', visible: true },
-  { key: 'floor', title: 'Piso', visible: true },
-  { key: 'type', title: 'Tipo', type: 'status', visible: true },
+  { key: 'code', title: 'Código', visible: true },
+  { key: 'customer', title: 'Cliente', visible: true },
+  { key: 'room', title: 'Habitación', visible: true },
+  { key: 'checkInDate', title: 'Check-in', type: 'date', visible: true },
+  { key: 'checkOutDate', title: 'Check-out', type: 'date', visible: true },
   { key: 'status', title: 'Estado', type: 'status', visible: true },
-  { key: 'pricePerNight', title: 'Precio/Noche', visible: true },
-  { key: 'capacity', title: 'Capacidad', visible: true },
+  { key: 'totalAmount', title: 'Total', visible: true },
   { key: 'createdAt', title: 'Creado', type: 'date', visible: true },
 ];
 
@@ -151,16 +157,16 @@ const onSort = (key: string, order: 'asc' | 'desc') => {
 };
 
 const onDelete = (items: Record<string, unknown>[]) => {
-  roomsToDelete.value = items;
+  reservationsToDelete.value = items;
   deleteDialog.value = true;
 };
 
 const onEdit = (item: Record<string, unknown>) => {
   openDrawer({
-    title: 'Editar Habitación',
-    component: RoomForm,
+    title: 'Editar Reservación',
+    component: ReservationForm,
     props: {
-      room: item,
+      reservation: item,
       inDrawer: true,
     },
   });
@@ -168,13 +174,13 @@ const onEdit = (item: Record<string, unknown>) => {
 
 const confirmDelete = async () => {
   try {
-    const ids = roomsToDelete.value.map((item) => item.id as string);
+    const ids = reservationsToDelete.value.map((item) => item.id as string);
     await removeMany(ids);
-    selectedRooms.value = [];
+    selectedReservations.value = [];
     deleteDialog.value = false;
-    showSnackbar('Habitación(es) eliminada(s) correctamente', 'success');
+    showSnackbar('Reservación(es) eliminada(s) correctamente', 'success');
   } catch {
-    showSnackbar('Error al eliminar habitación(es)', 'error');
+    showSnackbar('Error al eliminar reservación(es)', 'error');
   }
 };
 
@@ -184,34 +190,42 @@ const showSnackbar = (message: string, color: string) => {
   snackbar.show = true;
 };
 
-const getTypeColor = (type: string): string => {
-  const colors: Record<string, string> = {
-    SINGLE: 'grey',
-    DOUBLE: 'blue',
-    TWIN: 'cyan',
-    SUITE: 'purple',
-    DELUXE: 'orange',
-    PRESIDENTIAL: 'amber',
-    FAMILY: 'green',
-  };
-  return colors[type] ?? 'grey';
+const getCustomerName = (item: Record<string, unknown>): string => {
+  const customer = item.customer as { firstName?: string; lastName?: string } | undefined;
+  if (customer?.firstName && customer?.lastName) {
+    return `${customer.firstName} ${customer.lastName}`;
+  }
+  return '-';
 };
 
-const getTypeLabel = (type: string): string => type;
+const getRoomNumber = (item: Record<string, unknown>): string => {
+  const room = item.room as { number?: string } | undefined;
+  return room?.number ?? '-';
+};
 
 const getStatusColor = (status: string): string => {
   const colors: Record<string, string> = {
-    AVAILABLE: 'success',
-    OCCUPIED: 'error',
-    RESERVED: 'warning',
-    CLEANING: 'info',
-    MAINTENANCE: 'orange',
-    OUT_OF_SERVICE: 'grey',
+    PENDING: 'warning',
+    CONFIRMED: 'info',
+    CHECKED_IN: 'success',
+    CHECKED_OUT: 'grey',
+    CANCELLED: 'error',
+    NO_SHOW: 'error',
   };
   return colors[status] ?? 'grey';
 };
 
-const getStatusLabel = (status: string): string => status;
+const getStatusLabel = (status: string): string => {
+  const labels: Record<string, string> = {
+    PENDING: 'Pendiente',
+    CONFIRMED: 'Confirmada',
+    CHECKED_IN: 'Check-in',
+    CHECKED_OUT: 'Check-out',
+    CANCELLED: 'Cancelada',
+    NO_SHOW: 'No Show',
+  };
+  return labels[status] ?? status;
+};
 
 const formatDate = (dateString: string): string => {
   if (!dateString) return '-';
@@ -221,10 +235,18 @@ const formatDate = (dateString: string): string => {
     day: 'numeric',
   });
 };
+
+const formatCurrency = (amount: number): string => {
+  if (amount === undefined || amount === null) return '-';
+  return new Intl.NumberFormat('es-ES', {
+    style: 'currency',
+    currency: 'USD',
+  }).format(amount);
+};
 </script>
 
 <style scoped>
-.rooms-list {
+.reservations-list {
   height: 100%;
   display: flex;
   flex-direction: column;

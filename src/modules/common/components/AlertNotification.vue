@@ -3,7 +3,7 @@
     v-model="alertState.show"
     :timeout="alertState.timeout"
     :color="alertColors[alertState.type]"
-    location="bottom"
+    location="top center"
     variant="outlined"
   >
     <v-icon :icon="alertIcons[alertState.type]" class="mr-2" />

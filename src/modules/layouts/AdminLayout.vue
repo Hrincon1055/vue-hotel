@@ -34,6 +34,12 @@
           value="rooms"
           to="/rooms"
         ></v-list-item>
+        <v-list-item
+          prepend-icon="mdi-calendar-check"
+          title="Reservaciones"
+          value="reservations"
+          to="/reservations"
+        ></v-list-item>
       </v-list>
     </v-navigation-drawer>
     <v-main>
