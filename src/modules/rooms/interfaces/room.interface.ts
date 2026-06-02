@@ -74,12 +74,15 @@ export interface RoomFilters {
 
 export interface RoomStats {
   total: number;
-  available: number;
-  occupied: number;
-  reserved: number;
-  cleaning: number;
-  maintenance: number;
-  outOfService: number;
+  byStatus: {
+    available: number;
+    occupied: number;
+    reserved: number;
+    cleaning: number;
+    maintenance: number;
+    outOfService: number;
+  };
+  occupancyRate: string;
 }
 
 export interface RoomAvailabilityParams {
