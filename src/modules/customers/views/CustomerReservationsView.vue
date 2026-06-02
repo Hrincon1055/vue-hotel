@@ -23,7 +23,7 @@
     <template v-else-if="customer">
       <v-row>
         <v-col cols="12">
-          <v-card variant="outlined" class="mb-4">
+          <v-card variant="flat" class="mb-4">
             <v-card-item>
               <template #prepend>
                 <v-avatar color="primary" size="56">
@@ -46,68 +46,105 @@
 
       <v-row>
         <v-col cols="12">
-          <v-card variant="outlined">
-            <v-card-title class="d-flex align-center">
-              <v-icon class="mr-2">mdi-calendar-clock</v-icon>
-              Historial de Reservaciones
-              <v-chip class="ml-2" size="small" color="primary">
-                {{ totalReservations }}
-              </v-chip>
-            </v-card-title>
-            <v-card-text>
-              <v-alert v-if="isError" type="error" variant="tonal" class="mb-4">
-                Error al cargar las reservaciones. Por favor, intenta de nuevo.
-              </v-alert>
+          <div class="d-flex align-center mb-4">
+            <v-icon class="mr-2">mdi-calendar-clock</v-icon>
+            <span class="text-h6">Historial de Reservaciones</span>
+            <v-chip class="ml-2" size="small" color="primary">
+              {{ totalReservations }}
+            </v-chip>
+          </div>
 
-              <v-progress-linear v-if="isFetching" indeterminate color="primary" class="mb-4" />
-
-              <v-data-table
-                v-if="reservations.length > 0"
-                :headers="headers"
-                :items="reservations"
-                :items-per-page="10"
-                class="elevation-0"
-              >
-                <template #[`item.code`]="{ item }">
-                  <span class="font-weight-medium">{{ item.code }}</span>
+          <template v-if="sortedReservations.length > 0">
+            <v-card
+              v-for="reservation in sortedReservations"
+              :key="reservation.id"
+              :color="getStatusColor(reservation.status)"
+              variant="tonal"
+              class="mb-3"
+            >
+              <v-card-item>
+                <template #prepend>
+                  <v-avatar :color="getStatusColor(reservation.status)" variant="flat">
+                    <v-icon>mdi-calendar-check</v-icon>
+                  </v-avatar>
                 </template>
-                <template #[`item.room`]="{ item }">
-                  <v-chip size="small" variant="tonal">
-                    <v-icon start size="small">mdi-door</v-icon>
-                    {{ item.room?.number || 'N/A' }}
-                  </v-chip>
-                </template>
-                <template #[`item.checkInDate`]="{ item }">
-                  {{ formatDate(item.checkInDate) }}
-                </template>
-                <template #[`item.checkOutDate`]="{ item }">
-                  {{ formatDate(item.checkOutDate) }}
-                </template>
-                <template #[`item.status`]="{ item }">
-                  <v-chip :color="getStatusColor(item.status)" size="small" label>
-                    {{ getStatusLabel(item.status) }}
-                  </v-chip>
-                </template>
-                <template #[`item.totalAmount`]="{ item }">
-                  <span class="font-weight-medium"
-                    >${{ item.totalAmount?.toFixed(2) || '0.00' }}</span
+                <v-card-title class="d-flex align-center flex-wrap ga-2">
+                  <span class="font-weight-bold">{{ reservation.reservationCode }}</span>
+                  <v-chip
+                    :color="getStatusColor(reservation.status)"
+                    size="small"
+                    label
+                    variant="flat"
                   >
-                </template>
-                <template #[`item.guests`]="{ item }">
-                  {{ item.adults }} adultos
-                  <span v-if="item.children > 0">, {{ item.children }} niños</span>
-                </template>
-              </v-data-table>
+                    {{ getStatusLabel(reservation.status) }}
+                  </v-chip>
+                </v-card-title>
+                <v-card-subtitle>
+                  Creada el {{ formatDate(reservation.createdAt) }}
+                </v-card-subtitle>
+              </v-card-item>
 
-              <v-alert
-                v-else-if="!isFetching && reservations.length === 0"
-                type="info"
-                variant="tonal"
-              >
-                Este cliente no tiene reservaciones registradas.
-              </v-alert>
-            </v-card-text>
-          </v-card>
+              <v-card-text>
+                <v-row>
+                  <v-col cols="12" sm="6" md="3">
+                    <div class="text-caption text-medium-emphasis">Habitación</div>
+                    <div class="d-flex align-center">
+                      <v-icon size="small" class="mr-1">mdi-door</v-icon>
+                      <span class="font-weight-medium">
+                        {{ reservation.room?.number || 'N/A' }}
+                        <span class="text-caption"
+                          >({{ getRoomTypeLabel(reservation.room?.type) }})</span
+                        >
+                      </span>
+                    </div>
+                  </v-col>
+                  <v-col cols="12" sm="6" md="3">
+                    <div class="text-caption text-medium-emphasis">Check-in</div>
+                    <div class="d-flex align-center">
+                      <v-icon size="small" class="mr-1">mdi-calendar-arrow-right</v-icon>
+                      <span class="font-weight-medium">{{
+                        formatDate(reservation.checkInDate)
+                      }}</span>
+                    </div>
+                  </v-col>
+                  <v-col cols="12" sm="6" md="3">
+                    <div class="text-caption text-medium-emphasis">Check-out</div>
+                    <div class="d-flex align-center">
+                      <v-icon size="small" class="mr-1">mdi-calendar-arrow-left</v-icon>
+                      <span class="font-weight-medium">{{
+                        formatDate(reservation.checkOutDate)
+                      }}</span>
+                    </div>
+                  </v-col>
+                  <v-col cols="12" sm="6" md="3">
+                    <div class="text-caption text-medium-emphasis">Huéspedes</div>
+                    <div class="d-flex align-center">
+                      <v-icon size="small" class="mr-1">mdi-account-multiple</v-icon>
+                      <span class="font-weight-medium">
+                        {{ reservation.adults }} adulto(s)
+                        <span v-if="reservation.children > 0"
+                          >, {{ reservation.children }} niño(s)</span
+                        >
+                      </span>
+                    </div>
+                  </v-col>
+                </v-row>
+              </v-card-text>
+
+              <v-card-actions class="justify-space-between px-4 pb-3">
+                <div class="text-caption text-medium-emphasis">
+                  {{ calculateNights(reservation.checkInDate, reservation.checkOutDate) }} noches
+                </div>
+                <div class="text-h6 font-weight-bold">
+                  {{ formatCurrency(reservation.totalAmount) }}
+                </div>
+              </v-card-actions>
+            </v-card>
+          </template>
+
+          <v-alert v-else type="info" variant="tonal">
+            Este cliente no tiene reservaciones registradas.
+          </v-alert>
         </v-col>
       </v-row>
     </template>
@@ -124,7 +161,6 @@
 import { useQuery } from '@tanstack/vue-query';
 import { computed, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { useCustomerReservations } from '../composables/useCustomerReservations';
 import type { ReservationStatus } from '../interfaces/customer.interface';
 import { customersService } from '../services/customers.service';
 
@@ -146,23 +182,21 @@ const { data: customer, isLoading: isLoadingCustomer } = useQuery({
   enabled: computed(() => !!customerId.value),
 });
 
-const { reservations, totalReservations, isFetching, isError } =
-  useCustomerReservations(customerId);
-
 const customerInitials = computed(() => {
   if (!customer.value) return '';
   return `${customer.value.firstName.charAt(0)}${customer.value.lastName.charAt(0)}`.toUpperCase();
 });
 
-const headers = [
-  { title: 'Código', key: 'code', sortable: true },
-  { title: 'Habitación', key: 'room', sortable: false },
-  { title: 'Check-in', key: 'checkInDate', sortable: true },
-  { title: 'Check-out', key: 'checkOutDate', sortable: true },
-  { title: 'Huéspedes', key: 'guests', sortable: false },
-  { title: 'Estado', key: 'status', sortable: true },
-  { title: 'Total', key: 'totalAmount', sortable: true },
-];
+const sortedReservations = computed(() => {
+  if (!customer.value?.reservations) return [];
+  return [...customer.value.reservations].sort(
+    (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+  );
+});
+
+const totalReservations = computed(() => {
+  return customer.value?._count?.reservations ?? customer.value?.reservations?.length ?? 0;
+});
 
 const formatDate = (dateString: string): string => {
   if (!dateString) return 'N/A';
@@ -171,6 +205,22 @@ const formatDate = (dateString: string): string => {
     month: 'short',
     day: 'numeric',
   });
+};
+
+const formatCurrency = (amount: string | number): string => {
+  const numAmount = typeof amount === 'string' ? Number.parseFloat(amount) : amount;
+  if (Number.isNaN(numAmount)) return '$0.00';
+  return new Intl.NumberFormat('es-ES', {
+    style: 'currency',
+    currency: 'USD',
+  }).format(numAmount);
+};
+
+const calculateNights = (checkIn: string, checkOut: string): number => {
+  const start = new Date(checkIn);
+  const end = new Date(checkOut);
+  const diffTime = Math.abs(end.getTime() - start.getTime());
+  return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 };
 
 const getStatusColor = (status: ReservationStatus): string => {
@@ -195,6 +245,20 @@ const getStatusLabel = (status: ReservationStatus): string => {
     NO_SHOW: 'No Show',
   };
   return labels[status] || status;
+};
+
+const getRoomTypeLabel = (type?: string): string => {
+  if (!type) return '';
+  const labels: Record<string, string> = {
+    SINGLE: 'Individual',
+    DOUBLE: 'Doble',
+    TWIN: 'Twin',
+    SUITE: 'Suite',
+    DELUXE: 'Deluxe',
+    PRESIDENTIAL: 'Presidencial',
+    FAMILY: 'Familiar',
+  };
+  return labels[type] ?? type;
 };
 
 const goBack = () => {

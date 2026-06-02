@@ -1,10 +1,10 @@
 import { useQuery } from '@tanstack/vue-query';
-import { computed, type Ref } from 'vue';
+import { computed, toValue, type MaybeRef } from 'vue';
 import { customersService } from '../services/customers.service';
 
 const QUERY_KEY = 'customer-reservations';
 
-export function useCustomerReservations(customerId: Ref<string>) {
+export function useCustomerReservations(customerId: MaybeRef<string>) {
   const {
     data: reservations,
     isLoading,
@@ -13,9 +13,9 @@ export function useCustomerReservations(customerId: Ref<string>) {
     error,
     refetch,
   } = useQuery({
-    queryKey: [QUERY_KEY, customerId],
-    queryFn: () => customersService.getReservations(customerId.value),
-    enabled: computed(() => !!customerId.value),
+    queryKey: computed(() => [QUERY_KEY, toValue(customerId)]),
+    queryFn: () => customersService.getReservations(toValue(customerId)),
+    enabled: computed(() => !!toValue(customerId)),
   });
 
   const reservationsList = computed(() => reservations.value ?? []);

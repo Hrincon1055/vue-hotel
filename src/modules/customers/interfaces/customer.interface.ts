@@ -10,7 +10,7 @@ export type ReservationStatus =
 
 export interface CustomerReservation {
   id: string;
-  code: string;
+  reservationCode: string;
   roomId: string;
   room?: {
     id: string;
@@ -43,6 +43,10 @@ export interface Customer {
   birthDate?: string;
   createdAt: string;
   updatedAt: string;
+  reservations?: CustomerReservation[];
+  _count?: {
+    reservations: number;
+  };
 }
 
 export interface CreateCustomerDto {
