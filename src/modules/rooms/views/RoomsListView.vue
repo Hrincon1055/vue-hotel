@@ -13,6 +13,23 @@
     @delete="onDelete"
   />
 
+  <!-- Filtro de estado -->
+  <v-toolbar color="transparent" flat density="compact" class="px-4 mt-4 p-1">
+    <v-select
+      v-model="statusFilter"
+      :items="statusOptions"
+      item-title="title"
+      item-value="value"
+      label="Filtrar por estado"
+      density="compact"
+      variant="outlined"
+      hide-details
+      clearable
+      style="max-width: 220px"
+      @click:clear="statusFilter = ''"
+    />
+  </v-toolbar>
+
   <v-alert v-if="isError" type="error" variant="tonal" class="ma-4">
     Error al cargar las habitaciones. Por favor, intenta de nuevo.
   </v-alert>
@@ -82,17 +99,55 @@ import DataTable from '@/modules/common/components/DataTable.vue';
 import DrawerPanel from '@/modules/common/components/DrawerPanel.vue';
 import { useDrawer } from '@/modules/common/composables/useDrawer';
 import { useLoading } from '@/modules/common/composables/useLoading';
-import { computed, reactive, ref, watch } from 'vue';
+import { computed, onMounted, reactive, ref, watch } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 import RoomForm from '../components/RoomForm.vue';
 import { useRooms } from '../composables/useRooms';
-import type { RoomFilters } from '../interfaces/room.interface';
+import type { RoomFilters, RoomStatus } from '../interfaces/room.interface';
 
 /**code */
+const route = useRoute();
+const router = useRouter();
+
 const filters = ref<RoomFilters>({
   page: 1,
   limit: 10,
   sortBy: 'createdAt',
   sortOrder: 'desc',
+});
+
+// Filtro de status
+const statusFilter = ref<RoomStatus | ''>('');
+const statusOptions = [
+  { title: 'Todos', value: '' },
+  { title: 'Disponible', value: 'AVAILABLE' },
+  { title: 'Ocupada', value: 'OCCUPIED' },
+  { title: 'Reservada', value: 'RESERVED' },
+  { title: 'Limpieza', value: 'CLEANING' },
+  { title: 'Mantenimiento', value: 'MAINTENANCE' },
+  { title: 'Fuera de servicio', value: 'OUT_OF_SERVICE' },
+];
+
+// Leer query param al inicio
+onMounted(() => {
+  const statusParam = route.query.status as RoomStatus | undefined;
+  if (statusParam) {
+    statusFilter.value = statusParam;
+    filters.value = { ...filters.value, status: statusParam, page: 1 };
+  }
+});
+
+// Sincronizar filtro con URL
+watch(statusFilter, (newStatus) => {
+  if (newStatus) {
+    filters.value = { ...filters.value, status: newStatus, page: 1 };
+    router.replace({ query: { ...route.query, status: newStatus } });
+  } else {
+    const { status, ...rest } = filters.value;
+    filters.value = { ...rest, page: 1 };
+    const { status: _, ...queryRest } = route.query;
+    router.replace({ query: queryRest });
+  }
 });
 
 const { rooms, totalItems, isFetching, isError, removeMany, isDeletingMany } = useRooms(filters);
