@@ -11,7 +11,7 @@ export type ReservationStatus =
 
 export interface Reservation {
   id: string;
-  code: string;
+  reservationCode: string;
   customerId: string;
   customer?: Customer;
   roomId: string;

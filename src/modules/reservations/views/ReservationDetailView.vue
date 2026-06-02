@@ -24,7 +24,7 @@
         <v-card>
           <v-card-title class="d-flex align-center">
             <v-icon class="mr-2">mdi-calendar-check</v-icon>
-            Reservación {{ reservation.code }}
+            Reservación {{ reservation.reservationCode }}
             <v-chip :color="getStatusColor(reservation.status)" size="small" label class="ml-2">
               {{ getStatusLabel(reservation.status) }}
             </v-chip>
@@ -155,6 +155,18 @@
             >
               Cancelar
             </v-btn>
+            <v-btn
+              v-if="['PENDING', 'CONFIRMED'].includes(reservation.status)"
+              block
+              color="grey-darken-1"
+              variant="outlined"
+              class="mb-2"
+              prepend-icon="mdi-account-off"
+              :loading="isNoShow"
+              @click="onNoShow"
+            >
+              No Show
+            </v-btn>
           </v-card-text>
         </v-card>
       </v-col>
@@ -174,17 +186,30 @@
 import DrawerPanel from '@/modules/common/components/DrawerPanel.vue';
 import { useAlert } from '@/modules/common/composables/useAlert';
 import { useDrawer } from '@/modules/common/composables/useDrawer';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/vue-query';
+import { useQuery, useQueryClient } from '@tanstack/vue-query';
 import { computed } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
+import { useRoute } from 'vue-router';
 import ReservationForm from '../components/ReservationForm.vue';
+import { useReservationMutations } from '../composables/useReservations';
 import { reservationsService } from '../services/reservations.service';
 
 const route = useRoute();
-const router = useRouter();
 const queryClient = useQueryClient();
 const { openDrawer } = useDrawer();
 const { showAlert } = useAlert();
+
+const {
+  confirm,
+  checkIn,
+  checkOut,
+  cancel,
+  noShow,
+  isConfirming,
+  isCheckingIn,
+  isCheckingOut,
+  isCancelling,
+  isMarkingNoShow: isNoShow,
+} = useReservationMutations();
 
 const reservationId = computed(() => route.params.id as string);
 
@@ -193,59 +218,6 @@ const { data: reservation, isLoading } = useQuery({
   queryFn: () => reservationsService.getById(reservationId.value),
   enabled: computed(() => !!reservationId.value),
 });
-
-const confirmMutation = useMutation({
-  mutationFn: () => reservationsService.confirm(reservationId.value),
-  onSuccess: () => {
-    queryClient.invalidateQueries({ queryKey: ['reservation', reservationId] });
-    queryClient.invalidateQueries({ queryKey: ['reservations'] });
-    showAlert('Reservación confirmada', 'success');
-  },
-  onError: () => {
-    showAlert('Error al confirmar la reservación', 'error');
-  },
-});
-
-const checkInMutation = useMutation({
-  mutationFn: () => reservationsService.checkIn(reservationId.value),
-  onSuccess: () => {
-    queryClient.invalidateQueries({ queryKey: ['reservation', reservationId] });
-    queryClient.invalidateQueries({ queryKey: ['reservations'] });
-    showAlert('Check-in realizado', 'success');
-  },
-  onError: () => {
-    showAlert('Error al realizar check-in', 'error');
-  },
-});
-
-const checkOutMutation = useMutation({
-  mutationFn: () => reservationsService.checkOut(reservationId.value),
-  onSuccess: () => {
-    queryClient.invalidateQueries({ queryKey: ['reservation', reservationId] });
-    queryClient.invalidateQueries({ queryKey: ['reservations'] });
-    showAlert('Check-out realizado', 'success');
-  },
-  onError: () => {
-    showAlert('Error al realizar check-out', 'error');
-  },
-});
-
-const cancelMutation = useMutation({
-  mutationFn: () => reservationsService.cancel(reservationId.value),
-  onSuccess: () => {
-    queryClient.invalidateQueries({ queryKey: ['reservation', reservationId] });
-    queryClient.invalidateQueries({ queryKey: ['reservations'] });
-    showAlert('Reservación cancelada', 'success');
-  },
-  onError: () => {
-    showAlert('Error al cancelar la reservación', 'error');
-  },
-});
-
-const isConfirming = computed(() => confirmMutation.isPending.value);
-const isCheckingIn = computed(() => checkInMutation.isPending.value);
-const isCheckingOut = computed(() => checkOutMutation.isPending.value);
-const isCancelling = computed(() => cancelMutation.isPending.value);
 
 const onEdit = () => {
   openDrawer({
@@ -258,20 +230,54 @@ const onEdit = () => {
   });
 };
 
-const onConfirm = () => {
-  confirmMutation.mutate();
+const onConfirm = async () => {
+  try {
+    await confirm(reservationId.value);
+    queryClient.invalidateQueries({ queryKey: ['reservation', reservationId] });
+    showAlert({ message: 'Reservación confirmada', type: 'success' });
+  } catch {
+    // El interceptor ya muestra el error
+  }
 };
 
-const onCheckIn = () => {
-  checkInMutation.mutate();
+const onCheckIn = async () => {
+  try {
+    await checkIn({ id: reservationId.value });
+    queryClient.invalidateQueries({ queryKey: ['reservation', reservationId] });
+    showAlert({ message: 'Check-in realizado', type: 'success' });
+  } catch {
+    // El interceptor ya muestra el error
+  }
 };
 
-const onCheckOut = () => {
-  checkOutMutation.mutate();
+const onCheckOut = async () => {
+  try {
+    await checkOut({ id: reservationId.value });
+    queryClient.invalidateQueries({ queryKey: ['reservation', reservationId] });
+    showAlert({ message: 'Check-out realizado', type: 'success' });
+  } catch {
+    // El interceptor ya muestra el error
+  }
 };
 
-const onCancel = () => {
-  cancelMutation.mutate();
+const onCancel = async () => {
+  try {
+    await cancel(reservationId.value);
+    queryClient.invalidateQueries({ queryKey: ['reservation', reservationId] });
+    showAlert({ message: 'Reservación cancelada', type: 'success' });
+  } catch {
+    // El interceptor ya muestra el error
+  }
+};
+
+const onNoShow = async () => {
+  try {
+    await noShow(reservationId.value);
+    queryClient.invalidateQueries({ queryKey: ['reservation', reservationId] });
+    showAlert({ message: 'Reservación marcada como No Show', type: 'success' });
+  } catch {
+    // El interceptor ya muestra el error
+  }
 };
 
 const getStatusColor = (status: string): string => {

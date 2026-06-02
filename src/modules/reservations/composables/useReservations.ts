@@ -11,7 +11,7 @@ import { reservationsService } from '../services/reservations.service';
 
 const QUERY_KEY = 'reservations';
 
-// Composable solo para mutaciones (sin query) - usar en formularios
+// Composable solo para mutaciones (sin query) - usar en formularios y vistas de detalle
 export function useReservationMutations() {
   const queryClient = useQueryClient();
 
@@ -30,11 +30,58 @@ export function useReservationMutations() {
     },
   });
 
+  const confirmMutation = useMutation({
+    mutationFn: (id: string) => reservationsService.confirm(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEY] });
+    },
+  });
+
+  const checkInMutation = useMutation({
+    mutationFn: ({ id, data }: { id: string; data?: CheckInDto }) =>
+      reservationsService.checkIn(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEY] });
+    },
+  });
+
+  const checkOutMutation = useMutation({
+    mutationFn: ({ id, data }: { id: string; data?: CheckOutDto }) =>
+      reservationsService.checkOut(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEY] });
+    },
+  });
+
+  const cancelMutation = useMutation({
+    mutationFn: (id: string) => reservationsService.cancel(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEY] });
+    },
+  });
+
+  const noShowMutation = useMutation({
+    mutationFn: (id: string) => reservationsService.noShow(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEY] });
+    },
+  });
+
   return {
     create: createMutation.mutateAsync,
     update: updateMutation.mutateAsync,
+    confirm: confirmMutation.mutateAsync,
+    checkIn: checkInMutation.mutateAsync,
+    checkOut: checkOutMutation.mutateAsync,
+    cancel: cancelMutation.mutateAsync,
+    noShow: noShowMutation.mutateAsync,
     isCreating: createMutation.isPending,
     isUpdating: updateMutation.isPending,
+    isConfirming: confirmMutation.isPending,
+    isCheckingIn: checkInMutation.isPending,
+    isCheckingOut: checkOutMutation.isPending,
+    isCancelling: cancelMutation.isPending,
+    isMarkingNoShow: noShowMutation.isPending,
   };
 }
 

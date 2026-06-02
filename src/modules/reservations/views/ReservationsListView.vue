@@ -29,6 +29,9 @@
     @sort="onSort"
     @row-click="onEdit"
   >
+    <template #[`item.reservationCode`]="{ item }">
+      {{ item.reservationCode || '-' }}
+    </template>
     <template #[`item.customer`]="{ item }">
       {{ getCustomerName(item) }}
     </template>
@@ -49,8 +52,65 @@
     <template #[`item.totalAmount`]="{ value }">
       {{ formatCurrency(value as number) }}
     </template>
-    <template #[`item.createdAt`]="{ value }">
-      {{ formatDate(value as string) }}
+    <template #[`item.actions`]="{ item }">
+      <div class="d-flex ga-1">
+        <v-tooltip v-if="item.status === 'PENDING'" text="Confirmar" location="top">
+          <template #activator="{ props }">
+            <v-btn
+              v-bind="props"
+              icon="mdi-check"
+              size="x-small"
+              color="info"
+              variant="tonal"
+              :loading="isConfirming"
+              @click.stop="onConfirm(item)"
+            />
+          </template>
+        </v-tooltip>
+        <v-tooltip v-if="item.status === 'CONFIRMED'" text="Check-in" location="top">
+          <template #activator="{ props }">
+            <v-btn
+              v-bind="props"
+              icon="mdi-login"
+              size="x-small"
+              color="success"
+              variant="tonal"
+              :loading="isCheckingIn"
+              @click.stop="onCheckIn(item)"
+            />
+          </template>
+        </v-tooltip>
+        <v-tooltip v-if="item.status === 'CHECKED_IN'" text="Check-out" location="top">
+          <template #activator="{ props }">
+            <v-btn
+              v-bind="props"
+              icon="mdi-logout"
+              size="x-small"
+              color="warning"
+              variant="tonal"
+              :loading="isCheckingOut"
+              @click.stop="onCheckOut(item)"
+            />
+          </template>
+        </v-tooltip>
+        <v-tooltip
+          v-if="['PENDING', 'CONFIRMED'].includes(item.status as string)"
+          text="Cancelar"
+          location="top"
+        >
+          <template #activator="{ props }">
+            <v-btn
+              v-bind="props"
+              icon="mdi-close"
+              size="x-small"
+              color="error"
+              variant="tonal"
+              :loading="isCancelling"
+              @click.stop="onCancelReservation(item)"
+            />
+          </template>
+        </v-tooltip>
+      </div>
     </template>
   </data-table>
   <v-dialog v-model="deleteDialog" max-width="400">
@@ -84,6 +144,7 @@ import ContentHeader from '@/modules/common/components/ContentHeader.vue';
 import type { TableColumn } from '@/modules/common/components/DataTable.vue';
 import DataTable from '@/modules/common/components/DataTable.vue';
 import DrawerPanel from '@/modules/common/components/DrawerPanel.vue';
+import { useAlert } from '@/modules/common/composables/useAlert';
 import { useDrawer } from '@/modules/common/composables/useDrawer';
 import { useLoading } from '@/modules/common/composables/useLoading';
 import { computed, reactive, ref, watch } from 'vue';
@@ -99,10 +160,25 @@ const filters = ref<ReservationFilters>({
   sortOrder: 'desc',
 });
 
-const { reservations, totalItems, isFetching, isError, removeMany, isDeletingMany } =
-  useReservations(filters);
+const {
+  reservations,
+  totalItems,
+  isFetching,
+  isError,
+  removeMany,
+  isDeletingMany,
+  confirm,
+  checkIn,
+  checkOut,
+  cancel,
+  isConfirming,
+  isCheckingIn,
+  isCheckingOut,
+  isCancelling,
+} = useReservations(filters);
 const { openDrawer } = useDrawer();
 const { showLoading, hideLoading } = useLoading();
+const { showAlert } = useAlert();
 
 watch(
   isFetching,
@@ -130,14 +206,14 @@ const tableItems = computed<Record<string, unknown>[]>(() => {
 });
 
 const columns: TableColumn[] = [
-  { key: 'code', title: 'Código', visible: true },
+  { key: 'reservationCode', title: 'Código', visible: true },
   { key: 'customer', title: 'Cliente', visible: true },
   { key: 'room', title: 'Habitación', visible: true },
   { key: 'checkInDate', title: 'Check-in', type: 'date', visible: true },
   { key: 'checkOutDate', title: 'Check-out', type: 'date', visible: true },
   { key: 'status', title: 'Estado', type: 'status', visible: true },
   { key: 'totalAmount', title: 'Total', visible: true },
-  { key: 'createdAt', title: 'Creado', type: 'date', visible: true },
+  { key: 'actions', title: 'Acciones', visible: true },
 ];
 
 const onSearch = (value: string) => {
@@ -170,6 +246,42 @@ const onEdit = (item: Record<string, unknown>) => {
       inDrawer: true,
     },
   });
+};
+
+const onConfirm = async (item: Record<string, unknown>) => {
+  try {
+    await confirm(item.id as string);
+    showAlert({ message: 'Reservación confirmada', type: 'success' });
+  } catch {
+    // El interceptor ya muestra el error
+  }
+};
+
+const onCheckIn = async (item: Record<string, unknown>) => {
+  try {
+    await checkIn({ id: item.id as string });
+    showAlert({ message: 'Check-in realizado', type: 'success' });
+  } catch {
+    // El interceptor ya muestra el error
+  }
+};
+
+const onCheckOut = async (item: Record<string, unknown>) => {
+  try {
+    await checkOut({ id: item.id as string });
+    showAlert({ message: 'Check-out realizado', type: 'success' });
+  } catch {
+    // El interceptor ya muestra el error
+  }
+};
+
+const onCancelReservation = async (item: Record<string, unknown>) => {
+  try {
+    await cancel(item.id as string);
+    showAlert({ message: 'Reservación cancelada', type: 'success' });
+  } catch {
+    // El interceptor ya muestra el error
+  }
 };
 
 const confirmDelete = async () => {
