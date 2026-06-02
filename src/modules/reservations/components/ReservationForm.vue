@@ -50,6 +50,7 @@
           v-model="form.checkInDate"
           label="Fecha de Check-in"
           :rules="[rules.required]"
+          :min="today"
           variant="solo"
           density="comfortable"
           prepend-icon=""
@@ -61,6 +62,7 @@
           v-model="form.checkOutDate"
           label="Fecha de Check-out"
           :rules="[rules.required, rules.checkOutAfterCheckIn]"
+          :min="minCheckOutDate"
           variant="solo"
           density="comfortable"
           prepend-icon=""
@@ -150,6 +152,21 @@ const { showAlert } = useAlert();
 const formRef = ref();
 const isValid = ref(false);
 const isEditMode = computed(() => !!props.reservation?.id);
+
+// Date constraints
+const today = new Date();
+today.setHours(0, 0, 0, 0);
+
+const minCheckOutDate = computed(() => {
+  if (form.value.checkInDate) {
+    const checkIn = new Date(form.value.checkInDate);
+    checkIn.setDate(checkIn.getDate() + 1);
+    return checkIn;
+  }
+  const tomorrow = new Date(today);
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  return tomorrow;
+});
 
 // Customer and Room options
 const customerOptions = ref<{ label: string; value: string }[]>([]);
