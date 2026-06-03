@@ -13,6 +13,7 @@ export function useDashboardStats() {
     queryKey: [QUERY_KEY, 'room-stats'],
     queryFn: () => dashboardService.getRoomStats(),
     staleTime: 30000, // 30 segundos
+    refetchOnMount: 'always',
   });
 
   const {
@@ -23,6 +24,7 @@ export function useDashboardStats() {
     queryKey: [QUERY_KEY, 'reservations-stats'],
     queryFn: () => dashboardService.getReservationsStats(),
     staleTime: 30000,
+    refetchOnMount: 'always',
   });
 
   const {
@@ -33,6 +35,7 @@ export function useDashboardStats() {
     queryKey: [QUERY_KEY, 'customers-count'],
     queryFn: () => dashboardService.getCustomersCount(),
     staleTime: 60000, // 1 minuto
+    refetchOnMount: 'always',
   });
 
   const occupancyRate = computed(() => {
@@ -71,6 +74,7 @@ export function useTodayReservations() {
     queryKey: [QUERY_KEY, 'today-arrivals'],
     queryFn: () => dashboardService.getTodayArrivals(),
     staleTime: 30000,
+    refetchOnMount: 'always',
   });
 
   const {
@@ -81,6 +85,7 @@ export function useTodayReservations() {
     queryKey: [QUERY_KEY, 'today-departures'],
     queryFn: () => dashboardService.getTodayDepartures(),
     staleTime: 30000,
+    refetchOnMount: 'always',
   });
 
   const arrivalsCount = computed(() => todayArrivals.value?.length ?? 0);
@@ -103,6 +108,7 @@ export function useRecentReservations() {
     queryKey: [QUERY_KEY, 'recent-reservations'],
     queryFn: () => dashboardService.getRecentReservations(10),
     staleTime: 30000,
+    refetchOnMount: 'always',
   });
 
   return {
@@ -121,6 +127,7 @@ export function useRoomsByStatus() {
     queryKey: [QUERY_KEY, 'available-rooms'],
     queryFn: () => dashboardService.getAvailableRooms(),
     staleTime: 30000,
+    refetchOnMount: 'always',
   });
 
   const {
@@ -131,6 +138,7 @@ export function useRoomsByStatus() {
     queryKey: [QUERY_KEY, 'occupied-rooms'],
     queryFn: () => dashboardService.getOccupiedRooms(),
     staleTime: 30000,
+    refetchOnMount: 'always',
   });
 
   const {
@@ -141,6 +149,7 @@ export function useRoomsByStatus() {
     queryKey: [QUERY_KEY, 'cleaning-rooms'],
     queryFn: () => dashboardService.getCleaningRooms(),
     staleTime: 30000,
+    refetchOnMount: 'always',
   });
 
   const {
@@ -151,6 +160,7 @@ export function useRoomsByStatus() {
     queryKey: [QUERY_KEY, 'maintenance-rooms'],
     queryFn: () => dashboardService.getMaintenanceRooms(),
     staleTime: 30000,
+    refetchOnMount: 'always',
   });
 
   const isLoading = computed(

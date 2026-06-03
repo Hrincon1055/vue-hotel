@@ -16,9 +16,13 @@ export function useCustomerReservations(customerId: MaybeRef<string>) {
     queryKey: computed(() => [QUERY_KEY, toValue(customerId)]),
     queryFn: () => customersService.getReservations(toValue(customerId)),
     enabled: computed(() => !!toValue(customerId)),
+    refetchOnMount: 'always',
   });
 
-  const reservationsList = computed(() => reservations.value ?? []);
+  const reservationsList = computed(() => {
+    const data = reservations.value;
+    return Array.isArray(data) ? data : [];
+  });
   const totalReservations = computed(() => reservationsList.value.length);
 
   return {

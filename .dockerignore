@@ -1,0 +1,53 @@
+# =============================================
+# .dockerignore - Vue Hotel Frontend
+# =============================================
+
+# Dependencias
+node_modules
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Build outputs (se generan en el container)
+dist
+coverage
+
+# Git
+.git
+.gitignore
+
+# IDE
+.idea
+.vscode
+*.swp
+*.swo
+*.sublime-*
+
+# Archivos de entorno locales
+.env
+.env.local
+.env.*.local
+
+# Tests (solo archivos de test, no configs necesarios para build)
+**/*.test.ts
+**/*.spec.ts
+vitest.config.ts
+
+# Documentación
+docs
+*.md
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+logs
+*.log
+
+# Cache
+.cache
+.eslintcache
+
+# Typescript build info
+*.tsbuildinfo

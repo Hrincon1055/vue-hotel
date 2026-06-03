@@ -32,6 +32,8 @@
           icon="mdi-door"
           color="primary"
           :loading="isLoadingStats"
+          clickable
+          @click="goToRooms"
         />
       </v-col>
       <v-col cols="12" sm="6" md="3">
@@ -41,6 +43,8 @@
           icon="mdi-door-open"
           color="success"
           :loading="isLoadingStats"
+          clickable
+          @click="goToRoomsList('AVAILABLE')"
         />
       </v-col>
       <v-col cols="12" sm="6" md="3">
@@ -50,6 +54,8 @@
           icon="mdi-door-closed"
           color="error"
           :loading="isLoadingStats"
+          clickable
+          @click="goToRoomsList('OCCUPIED')"
         />
       </v-col>
       <v-col cols="12" sm="6" md="3">
@@ -458,6 +464,10 @@ const refreshAll = async () => {
 
 const goToReservation = (reservation: Reservation) => {
   router.push(`/reservations/${reservation.id}`);
+};
+
+const goToRooms = () => {
+  router.push('/rooms');
 };
 
 const goToRoomsList = (status: string) => {

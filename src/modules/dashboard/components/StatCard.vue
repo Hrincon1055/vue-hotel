@@ -1,5 +1,11 @@
 <template>
-  <v-card :color="color" variant="tonal" class="stat-card">
+  <v-card
+    :color="color"
+    variant="tonal"
+    class="stat-card"
+    :class="{ 'stat-card--clickable': clickable }"
+    @click="handleClick"
+  >
     <v-card-item>
       <template #prepend>
         <v-avatar :color="color" variant="flat" size="48">
@@ -36,7 +42,18 @@ const props = defineProps<{
   subtitle?: string;
   progress?: number;
   loading?: boolean;
+  clickable?: boolean;
 }>();
+
+const emit = defineEmits<{
+  click: [];
+}>();
+
+const handleClick = () => {
+  if (props.clickable) {
+    emit('click');
+  }
+};
 
 const formattedValue = computed(() => {
   if (typeof props.value === 'number') {
@@ -52,7 +69,11 @@ const formattedValue = computed(() => {
   transition: transform 0.2s ease-in-out;
 }
 
-.stat-card:hover {
+.stat-card--clickable {
+  cursor: pointer;
+}
+
+.stat-card--clickable:hover {
   transform: translateY(-2px);
 }
 </style>

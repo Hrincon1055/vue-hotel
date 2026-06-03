@@ -22,7 +22,7 @@
       </template>
     </v-card-item>
     <v-card-text class="pt-0">
-      <v-row dense>
+      <v-row density="comfortable">
         <v-col cols="6">
           <div class="text-caption text-medium-emphasis">Check-in</div>
           <div class="text-body-2">{{ formatDate(reservation.checkInDate) }}</div>

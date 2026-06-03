@@ -158,14 +158,22 @@
 </template>
 
 <script setup lang="ts">
+import { useLoading } from '@/modules/common/composables/useLoading';
 import { useQuery } from '@tanstack/vue-query';
-import { computed, ref, watch } from 'vue';
+import { computed, onUnmounted, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
+import { useCustomerReservations } from '../composables/useCustomerReservations';
 import type { ReservationStatus } from '../interfaces/customer.interface';
 import { customersService } from '../services/customers.service';
 
 const route = useRoute();
 const router = useRouter();
+const { showLoading, hideLoading } = useLoading();
+
+// Asegurar que el loading se oculte al desmontar el componente
+onUnmounted(() => {
+  hideLoading();
+});
 
 const customerId = ref(route.params.id as string);
 
@@ -180,7 +188,30 @@ const { data: customer, isLoading: isLoadingCustomer } = useQuery({
   queryKey: ['customer', customerId],
   queryFn: () => customersService.getById(customerId.value),
   enabled: computed(() => !!customerId.value),
+  refetchOnMount: 'always',
 });
+
+// Usar el composable para obtener las reservaciones desde el endpoint correcto
+const {
+  reservations,
+  totalReservations,
+  isLoading: isLoadingReservations,
+} = useCustomerReservations(customerId);
+
+// Sincronizar estado de carga con GlobalLoading
+const isLoading = computed(() => isLoadingCustomer.value || isLoadingReservations.value);
+
+watch(
+  isLoading,
+  (loading) => {
+    if (loading) {
+      showLoading();
+    } else {
+      hideLoading();
+    }
+  },
+  { immediate: true },
+);
 
 const customerInitials = computed(() => {
   if (!customer.value) return '';
@@ -188,14 +219,11 @@ const customerInitials = computed(() => {
 });
 
 const sortedReservations = computed(() => {
-  if (!customer.value?.reservations) return [];
-  return [...customer.value.reservations].sort(
+  const list = reservations.value;
+  if (!list || !Array.isArray(list)) return [];
+  return [...list].sort(
     (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
   );
-});
-
-const totalReservations = computed(() => {
-  return customer.value?._count?.reservations ?? customer.value?.reservations?.length ?? 0;
 });
 
 const formatDate = (dateString: string): string => {
