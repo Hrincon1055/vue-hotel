@@ -186,12 +186,11 @@
 import DrawerPanel from '@/modules/common/components/DrawerPanel.vue';
 import { useAlert } from '@/modules/common/composables/useAlert';
 import { useDrawer } from '@/modules/common/composables/useDrawer';
-import { useQuery, useQueryClient } from '@tanstack/vue-query';
+import { useQueryClient } from '@tanstack/vue-query';
 import { computed } from 'vue';
 import { useRoute } from 'vue-router';
 import ReservationForm from '../components/ReservationForm.vue';
-import { useReservationMutations } from '../composables/useReservations';
-import { reservationsService } from '../services/reservations.service';
+import { useReservation, useReservationMutations } from '../composables/useReservations';
 
 const route = useRoute();
 const queryClient = useQueryClient();
@@ -213,11 +212,7 @@ const {
 
 const reservationId = computed(() => route.params.id as string);
 
-const { data: reservation, isLoading } = useQuery({
-  queryKey: ['reservation', reservationId],
-  queryFn: () => reservationsService.getById(reservationId.value),
-  enabled: computed(() => !!reservationId.value),
-});
+const { reservation, isLoading } = useReservation(reservationId);
 
 const onEdit = () => {
   openDrawer({

@@ -16,6 +16,9 @@ export const authService = {
   },
 
   async logout() {
+    localStorage.removeItem(import.meta.env.VITE_ACCESS_TOKEN_KEY);
+    localStorage.removeItem(import.meta.env.VITE_REFRESH_TOKEN_KEY);
+    localStorage.removeItem(import.meta.env.VITE_USER_KEY);
     await api.post('/auth/logout');
   },
 

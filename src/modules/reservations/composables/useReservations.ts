@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/vue-query';
-import { computed, type Ref } from 'vue';
+import { computed, toValue, type MaybeRef, type Ref } from 'vue';
 import type {
   CheckInDto,
   CheckOutDto,
@@ -10,6 +10,32 @@ import type {
 import { reservationsService } from '../services/reservations.service';
 
 const QUERY_KEY = 'reservations';
+
+// Composable para obtener una reservación por ID
+export function useReservation(reservationId: MaybeRef<string>) {
+  const {
+    data: reservation,
+    isLoading,
+    isFetching,
+    isError,
+    error,
+    refetch,
+  } = useQuery({
+    queryKey: computed(() => ['reservation', toValue(reservationId)]),
+    queryFn: () => reservationsService.getById(toValue(reservationId)),
+    enabled: computed(() => !!toValue(reservationId)),
+    refetchOnMount: 'always',
+  });
+
+  return {
+    reservation,
+    isLoading,
+    isFetching,
+    isError,
+    error,
+    refetch,
+  };
+}
 
 // Composable solo para mutaciones (sin query) - usar en formularios y vistas de detalle
 export function useReservationMutations() {

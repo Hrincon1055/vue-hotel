@@ -162,7 +162,6 @@ import { useLoading } from '@/modules/common/composables/useLoading';
 import { useQuery } from '@tanstack/vue-query';
 import { computed, onUnmounted, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { useCustomerReservations } from '../composables/useCustomerReservations';
 import type { ReservationStatus } from '../interfaces/customer.interface';
 import { customersService } from '../services/customers.service';
 
@@ -191,18 +190,19 @@ const { data: customer, isLoading: isLoadingCustomer } = useQuery({
   refetchOnMount: 'always',
 });
 
-// Usar el composable para obtener las reservaciones desde el endpoint correcto
-const {
-  reservations,
-  totalReservations,
-  isLoading: isLoadingReservations,
-} = useCustomerReservations(customerId);
+// Obtener reservaciones directamente del cliente
+const reservations = computed(() => {
+  const data = customer.value?.reservations;
+  return Array.isArray(data) ? data : [];
+});
+
+const totalReservations = computed(() => {
+  return customer.value?._count?.reservations ?? reservations.value.length;
+});
 
 // Sincronizar estado de carga con GlobalLoading
-const isLoading = computed(() => isLoadingCustomer.value || isLoadingReservations.value);
-
 watch(
-  isLoading,
+  isLoadingCustomer,
   (loading) => {
     if (loading) {
       showLoading();

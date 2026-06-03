@@ -53,9 +53,7 @@
           </router-link>
         </v-app-bar-title>
         <v-spacer></v-spacer>
-        <!-- <v-btn icon="mdi-magnify"></v-btn>
-        <v-btn icon="mdi-bell"></v-btn>
-        <v-btn icon="mdi-account-circle"></v-btn> -->
+        <v-btn icon="mdi-logout" @click="logout"></v-btn>
       </v-app-bar>
       <router-view />
     </v-main>
@@ -63,11 +61,14 @@
 </template>
 
 <script setup lang="ts">
+import { authService } from '@/modules/auth/services/auth.service';
 import { useAuthStore } from '@/modules/auth/store/auth.store';
 import { storeToRefs } from 'pinia';
 import { computed, ref } from 'vue';
+import { useRouter } from 'vue-router';
 
 const drawer = ref(true);
+const router = useRouter();
 
 const authStore = useAuthStore();
 const { user, fullName } = storeToRefs(authStore);
@@ -78,6 +79,17 @@ const userInitials = computed(() => {
   const last = user.value.lastName?.charAt(0) || '';
   return (first + last).toUpperCase();
 });
+
+const logout = async () => {
+  try {
+    await authService.logout();
+  } catch {
+    // Ignorar errores del servidor
+  } finally {
+    authStore.clearAuth();
+    router.push('/login');
+  }
+};
 </script>
 
 <style scoped>
