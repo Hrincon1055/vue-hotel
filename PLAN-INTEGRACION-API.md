@@ -417,13 +417,13 @@ interface RoomStats {
 
 ### Información General
 
-| Campo                       | Valor                             |
-| --------------------------- | --------------------------------- |
-| **Nombre del módulo**       | `reservations`                    |
-| **Carpeta**                 | `src/modules/reservations/`       |
-| **Funcionalidad principal** | Gestión completa de reservaciones |
-| **Dependencias**            | `auth`, `customers`, `rooms`      |
-| **Roles permitidos**        | Todos los roles autenticados      |
+| Campo                       | Valor                                                         |
+| --------------------------- | ------------------------------------------------------------- |
+| **Nombre del módulo**       | `reservations`                                                |
+| **Carpeta**                 | `src/modules/reservations/`                                   |
+| **Funcionalidad principal** | Gestión completa de reservaciones (individuales y multi-hab.) |
+| **Dependencias**            | `auth`, `customers`, `rooms`                                  |
+| **Roles permitidos**        | Todos los roles autenticados                                  |
 
 ### Estructura del Módulo
 
@@ -438,10 +438,14 @@ reservations/
 │   ├── CheckInDialog.vue
 │   ├── CheckOutDialog.vue
 │   ├── TodayArrivals.vue
-│   └── TodayDepartures.vue
+│   ├── TodayDepartures.vue
+│   ├── MultiRoomReservationForm.vue      ← NUEVO
+│   ├── MultiRoomReservationTable.vue     ← NUEVO
+│   └── MultiRoomRoomSelector.vue        ← NUEVO
 ├── composables/
 │   ├── useReservations.ts
-│   └── useReservationActions.ts
+│   ├── useReservationActions.ts
+│   └── useMultiRoomReservations.ts      ← NUEVO
 ├── interfaces/
 │   └── reservation.interface.ts
 ├── services/
@@ -450,10 +454,13 @@ reservations/
     ├── ReservationsListView.vue
     ├── ReservationDetailView.vue
     ├── ReservationFormView.vue
-    └── DashboardView.vue
+    ├── DashboardView.vue
+    ├── MultiRoomReservationsListView.vue ← NUEVO
+    ├── MultiRoomReservationDetailView.vue← NUEVO
+    └── MultiRoomReservationFormView.vue  ← NUEVO
 ```
 
-### Endpoints
+### Endpoints — Reservaciones Individuales
 
 | Método   | Endpoint                         | Descripción            | Parámetros                                                                                                             |
 | -------- | -------------------------------- | ---------------------- | ---------------------------------------------------------------------------------------------------------------------- |
@@ -471,15 +478,29 @@ reservations/
 | `POST`   | `/reservations/{id}/cancel`      | Cancelar reservación   | -                                                                                                                      |
 | `POST`   | `/reservations/{id}/no-show`     | Marcar como no-show    | -                                                                                                                      |
 
+### Endpoints — Reservaciones Multi-Habitación ✨ NUEVO
+
+| Método | Endpoint                                | Descripción                      | Parámetros                                                                                                     |
+| ------ | --------------------------------------- | -------------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| `POST` | `/reservations/multi-room`              | Crear reservación multi-hab.     | `CreateMultiRoomReservationDto`                                                                                |
+| `GET`  | `/reservations/multi-room`              | Listar reservaciones multi-hab.  | `page, limit, sortBy, sortOrder, search, customerId, roomId, checkInFrom, checkInTo, checkOutFrom, checkOutTo` |
+| `GET`  | `/reservations/multi-room/code/{code}`  | Buscar multi-hab. por código     | -                                                                                                              |
+| `GET`  | `/reservations/multi-room/{id}`         | Obtener reservación multi-hab.   | -                                                                                                              |
+| `POST` | `/reservations/multi-room/{id}/confirm` | Confirmar todas las habitaciones | -                                                                                                              |
+| `POST` | `/reservations/multi-room/{id}/cancel`  | Cancelar habitaciones elegibles  | -                                                                                                              |
+
 ### Rutas del Frontend
 
-| Ruta                     | Nombre                | Vista                       | Descripción                          |
-| ------------------------ | --------------------- | --------------------------- | ------------------------------------ |
-| `/`                      | `dashboard`           | `DashboardView.vue`         | Panel principal con llegadas/salidas |
-| `/reservations`          | `reservations-list`   | `ReservationsListView.vue`  | Lista de reservaciones               |
-| `/reservations/new`      | `reservations-create` | `ReservationFormView.vue`   | Crear reservación                    |
-| `/reservations/:id`      | `reservations-detail` | `ReservationDetailView.vue` | Detalle de reservación               |
-| `/reservations/:id/edit` | `reservations-edit`   | `ReservationFormView.vue`   | Editar reservación                   |
+| Ruta                           | Nombre                      | Vista                                | Descripción                          |
+| ------------------------------ | --------------------------- | ------------------------------------ | ------------------------------------ |
+| `/`                            | `dashboard`                 | `DashboardView.vue`                  | Panel principal con llegadas/salidas |
+| `/reservations`                | `reservations-list`         | `ReservationsListView.vue`           | Lista de reservaciones               |
+| `/reservations/new`            | `reservations-create`       | `ReservationFormView.vue`            | Crear reservación                    |
+| `/reservations/:id`            | `reservations-detail`       | `ReservationDetailView.vue`          | Detalle de reservación               |
+| `/reservations/:id/edit`       | `reservations-edit`         | `ReservationFormView.vue`            | Editar reservación                   |
+| `/reservations/multi-room`     | `reservations-multi-list`   | `MultiRoomReservationsListView.vue`  | Lista de reservas multi-hab. ← NUEVO |
+| `/reservations/multi-room/new` | `reservations-multi-create` | `MultiRoomReservationFormView.vue`   | Crear reserva multi-hab. ← NUEVO     |
+| `/reservations/multi-room/:id` | `reservations-multi-detail` | `MultiRoomReservationDetailView.vue` | Detalle multi-hab. ← NUEVO           |
 
 ### Interfaces TypeScript
 
@@ -529,6 +550,37 @@ interface CheckInDto {
 
 interface CheckOutDto {
   notes?: string;
+}
+
+// ── Multi-Room Reservations ── NUEVO ──────────────────────────────────────
+
+interface CreateMultiRoomReservationRoomDto {
+  roomId: string;
+  adults?: number; // default: 1
+  children?: number; // default: 0
+  notes?: string;
+}
+
+interface CreateMultiRoomReservationDto {
+  customerId: string;
+  checkInDate: string; // ISO date, ej: "2026-07-01"
+  checkOutDate: string; // ISO date, ej: "2026-07-05"
+  rooms: CreateMultiRoomReservationRoomDto[];
+  notes?: string;
+}
+
+interface MultiRoomReservation {
+  id: string;
+  code: string;
+  customerId: string;
+  customer?: Customer;
+  checkInDate: string;
+  checkOutDate: string;
+  reservations: Reservation[]; // Reservaciones individuales agrupadas
+  totalAmount: number;
+  notes?: string;
+  createdAt: string;
+  updatedAt: string;
 }
 ```
 
@@ -779,6 +831,23 @@ const routes = [
   { path: '/reservations/new', name: 'reservations-create', component: ReservationFormView },
   { path: '/reservations/:id', name: 'reservations-detail', component: ReservationDetailView },
   { path: '/reservations/:id/edit', name: 'reservations-edit', component: ReservationFormView },
+
+  // Multi-Room Reservations
+  {
+    path: '/reservations/multi-room',
+    name: 'reservations-multi-list',
+    component: MultiRoomReservationsListView,
+  },
+  {
+    path: '/reservations/multi-room/new',
+    name: 'reservations-multi-create',
+    component: MultiRoomReservationFormView,
+  },
+  {
+    path: '/reservations/multi-room/:id',
+    name: 'reservations-multi-detail',
+    component: MultiRoomReservationDetailView,
+  },
 
   // Services
   { path: '/services', name: 'services-list', component: ServicesListView },
@@ -1262,6 +1331,26 @@ const routes = [
     name: 'reservations-edit',
     component: () => import('@/modules/reservations/views/ReservationFormView.vue'),
     beforeEnter: requireRoles(['ADMIN', 'MANAGER', 'RECEPTIONIST']),
+  },
+
+  // ========== MULTI-ROOM RESERVATIONS ← NUEVO ==========
+  {
+    path: '/reservations/multi-room',
+    name: 'reservations-multi-list',
+    component: () => import('@/modules/reservations/views/MultiRoomReservationsListView.vue'),
+    beforeEnter: requireAuth,
+  },
+  {
+    path: '/reservations/multi-room/new',
+    name: 'reservations-multi-create',
+    component: () => import('@/modules/reservations/views/MultiRoomReservationFormView.vue'),
+    beforeEnter: requireRoles(['ADMIN', 'MANAGER', 'RECEPTIONIST']),
+  },
+  {
+    path: '/reservations/multi-room/:id',
+    name: 'reservations-multi-detail',
+    component: () => import('@/modules/reservations/views/MultiRoomReservationDetailView.vue'),
+    beforeEnter: requireAuth,
   },
 
   // ========== SERVICES ==========

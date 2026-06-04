@@ -107,6 +107,15 @@
         <v-card>
           <v-card-title>Acciones</v-card-title>
           <v-card-text>
+            <v-btn
+              block
+              color="secondary"
+              class="mb-2"
+              prepend-icon="mdi-printer"
+              @click="onPrintPdf"
+            >
+              Imprimir PDF
+            </v-btn>
             <v-btn block color="primary" class="mb-2" prepend-icon="mdi-pencil" @click="onEdit">
               Editar
             </v-btn>
@@ -183,6 +192,7 @@
 </template>
 
 <script setup lang="ts">
+import { generateReservationPdf } from '@/helpers/reservationPdf';
 import DrawerPanel from '@/modules/common/components/DrawerPanel.vue';
 import { useAlert } from '@/modules/common/composables/useAlert';
 import { useDrawer } from '@/modules/common/composables/useDrawer';
@@ -222,6 +232,33 @@ const onEdit = () => {
       reservation: reservation.value,
       inDrawer: true,
     },
+  });
+};
+
+const onPrintPdf = () => {
+  if (!reservation.value) return;
+  generateReservationPdf({
+    reservationCode: reservation.value.reservationCode,
+    createdAt: reservation.value.createdAt,
+    checkInDate: reservation.value.checkInDate,
+    checkOutDate: reservation.value.checkOutDate,
+    customer: {
+      firstName: reservation.value.customer?.firstName ?? '',
+      lastName: reservation.value.customer?.lastName ?? '',
+      email: reservation.value.customer?.email,
+      phone: reservation.value.customer?.phone,
+      documentType: reservation.value.customer?.documentType,
+      documentNumber: reservation.value.customer?.documentNumber,
+    },
+    room: {
+      number: reservation.value.room?.number ?? '',
+      type: reservation.value.room?.type ?? '',
+    },
+    adults: reservation.value.adults,
+    children: reservation.value.children,
+    totalAmount: reservation.value.totalAmount,
+    status: reservation.value.status,
+    notes: reservation.value.notes,
   });
 };
 

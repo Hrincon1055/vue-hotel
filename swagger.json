@@ -1,9 +1,9 @@
 {
   "openapi": "3.0.0",
   "paths": {
-    "/api/v1/v1/auth/login": {
+    "/api/v1/auth/login": {
       "post": {
-        "operationId": "AuthController_login_v1",
+        "operationId": "AuthController_login",
         "parameters": [],
         "requestBody": {
           "required": true,
@@ -41,14 +41,12 @@
           }
         },
         "summary": "Employee login",
-        "tags": [
-          "Authentication"
-        ]
+        "tags": ["Authentication"]
       }
     },
-    "/api/v1/v1/auth/refresh": {
+    "/api/v1/auth/refresh": {
       "post": {
-        "operationId": "AuthController_refresh_v1",
+        "operationId": "AuthController_refresh",
         "parameters": [],
         "requestBody": {
           "required": true,
@@ -79,14 +77,12 @@
           }
         },
         "summary": "Refresh access token",
-        "tags": [
-          "Authentication"
-        ]
+        "tags": ["Authentication"]
       }
     },
-    "/api/v1/v1/auth/logout": {
+    "/api/v1/auth/logout": {
       "post": {
-        "operationId": "AuthController_logout_v1",
+        "operationId": "AuthController_logout",
         "parameters": [],
         "responses": {
           "200": {
@@ -102,14 +98,12 @@
           }
         ],
         "summary": "Logout user",
-        "tags": [
-          "Authentication"
-        ]
+        "tags": ["Authentication"]
       }
     },
-    "/api/v1/v1/auth/me": {
+    "/api/v1/auth/me": {
       "post": {
-        "operationId": "AuthController_me_v1",
+        "operationId": "AuthController_me",
         "parameters": [],
         "responses": {
           "200": {
@@ -135,14 +129,12 @@
           }
         ],
         "summary": "Get current user info",
-        "tags": [
-          "Authentication"
-        ]
+        "tags": ["Authentication"]
       }
     },
-    "/api/v1/v1/employees": {
+    "/api/v1/employees": {
       "post": {
-        "operationId": "EmployeesController_create_v1",
+        "operationId": "EmployeesController_create",
         "parameters": [],
         "requestBody": {
           "required": true,
@@ -171,12 +163,10 @@
           }
         ],
         "summary": "Create a new employee",
-        "tags": [
-          "Employees"
-        ]
+        "tags": ["Employees"]
       },
       "get": {
-        "operationId": "EmployeesController_findAll_v1",
+        "operationId": "EmployeesController_findAll",
         "parameters": [
           {
             "name": "page",
@@ -218,10 +208,7 @@
             "schema": {
               "default": "desc",
               "type": "string",
-              "enum": [
-                "asc",
-                "desc"
-              ]
+              "enum": ["asc", "desc"]
             }
           },
           {
@@ -240,12 +227,7 @@
             "description": "Filter by role",
             "schema": {
               "type": "string",
-              "enum": [
-                "ADMIN",
-                "MANAGER",
-                "RECEPTIONIST",
-                "HOUSEKEEPING"
-              ]
+              "enum": ["ADMIN", "MANAGER", "RECEPTIONIST", "HOUSEKEEPING"]
             }
           },
           {
@@ -255,12 +237,7 @@
             "description": "Filter by status",
             "schema": {
               "type": "string",
-              "enum": [
-                "ACTIVE",
-                "INACTIVE",
-                "ON_LEAVE",
-                "TERMINATED"
-              ]
+              "enum": ["ACTIVE", "INACTIVE", "ON_LEAVE", "TERMINATED"]
             }
           }
         ],
@@ -275,14 +252,12 @@
           }
         ],
         "summary": "Get all employees with pagination and filters",
-        "tags": [
-          "Employees"
-        ]
+        "tags": ["Employees"]
       }
     },
-    "/api/v1/v1/employees/{id}": {
+    "/api/v1/employees/{id}": {
       "get": {
-        "operationId": "EmployeesController_findOne_v1",
+        "operationId": "EmployeesController_findOne",
         "parameters": [
           {
             "name": "id",
@@ -308,12 +283,10 @@
           }
         ],
         "summary": "Get employee by ID",
-        "tags": [
-          "Employees"
-        ]
+        "tags": ["Employees"]
       },
       "patch": {
-        "operationId": "EmployeesController_update_v1",
+        "operationId": "EmployeesController_update",
         "parameters": [
           {
             "name": "id",
@@ -349,12 +322,10 @@
           }
         ],
         "summary": "Update employee",
-        "tags": [
-          "Employees"
-        ]
+        "tags": ["Employees"]
       },
       "delete": {
-        "operationId": "EmployeesController_remove_v1",
+        "operationId": "EmployeesController_remove",
         "parameters": [
           {
             "name": "id",
@@ -380,14 +351,12 @@
           }
         ],
         "summary": "Delete employee (soft delete)",
-        "tags": [
-          "Employees"
-        ]
+        "tags": ["Employees"]
       }
     },
-    "/api/v1/v1/employees/{id}/change-password": {
+    "/api/v1/employees/{id}/change-password": {
       "patch": {
-        "operationId": "EmployeesController_changePasswordAdmin_v1",
+        "operationId": "EmployeesController_changePasswordAdmin",
         "parameters": [
           {
             "name": "id",
@@ -423,14 +392,12 @@
           }
         ],
         "summary": "Change employee password (Admin only)",
-        "tags": [
-          "Employees"
-        ]
+        "tags": ["Employees"]
       }
     },
-    "/api/v1/v1/employees/me/change-password": {
+    "/api/v1/employees/me/change-password": {
       "patch": {
-        "operationId": "EmployeesController_changeOwnPassword_v1",
+        "operationId": "EmployeesController_changeOwnPassword",
         "parameters": [],
         "requestBody": {
           "required": true,
@@ -456,14 +423,12 @@
           }
         ],
         "summary": "Change own password",
-        "tags": [
-          "Employees"
-        ]
+        "tags": ["Employees"]
       }
     },
-    "/api/v1/v1/employees/{id}/restore": {
+    "/api/v1/employees/{id}/restore": {
       "post": {
-        "operationId": "EmployeesController_restore_v1",
+        "operationId": "EmployeesController_restore",
         "parameters": [
           {
             "name": "id",
@@ -489,14 +454,12 @@
           }
         ],
         "summary": "Restore deleted employee",
-        "tags": [
-          "Employees"
-        ]
+        "tags": ["Employees"]
       }
     },
-    "/api/v1/v1/customers": {
+    "/api/v1/customers": {
       "post": {
-        "operationId": "CustomersController_create_v1",
+        "operationId": "CustomersController_create",
         "parameters": [],
         "requestBody": {
           "required": true,
@@ -525,12 +488,10 @@
           }
         ],
         "summary": "Create a new customer",
-        "tags": [
-          "Customers"
-        ]
+        "tags": ["Customers"]
       },
       "get": {
-        "operationId": "CustomersController_findAll_v1",
+        "operationId": "CustomersController_findAll",
         "parameters": [
           {
             "name": "page",
@@ -572,10 +533,7 @@
             "schema": {
               "default": "desc",
               "type": "string",
-              "enum": [
-                "asc",
-                "desc"
-              ]
+              "enum": ["asc", "desc"]
             }
           },
           {
@@ -594,12 +552,7 @@
             "description": "Filter by document type",
             "schema": {
               "type": "string",
-              "enum": [
-                "PASSPORT",
-                "NATIONAL_ID",
-                "DRIVERS_LICENSE",
-                "OTHER"
-              ]
+              "enum": ["PASSPORT", "NATIONAL_ID", "DRIVERS_LICENSE", "OTHER"]
             }
           },
           {
@@ -623,14 +576,12 @@
           }
         ],
         "summary": "Get all customers with pagination and filters",
-        "tags": [
-          "Customers"
-        ]
+        "tags": ["Customers"]
       }
     },
-    "/api/v1/v1/customers/{id}": {
+    "/api/v1/customers/{id}": {
       "get": {
-        "operationId": "CustomersController_findOne_v1",
+        "operationId": "CustomersController_findOne",
         "parameters": [
           {
             "name": "id",
@@ -656,12 +607,10 @@
           }
         ],
         "summary": "Get customer by ID",
-        "tags": [
-          "Customers"
-        ]
+        "tags": ["Customers"]
       },
       "patch": {
-        "operationId": "CustomersController_update_v1",
+        "operationId": "CustomersController_update",
         "parameters": [
           {
             "name": "id",
@@ -697,12 +646,10 @@
           }
         ],
         "summary": "Update customer",
-        "tags": [
-          "Customers"
-        ]
+        "tags": ["Customers"]
       },
       "delete": {
-        "operationId": "CustomersController_remove_v1",
+        "operationId": "CustomersController_remove",
         "parameters": [
           {
             "name": "id",
@@ -728,14 +675,12 @@
           }
         ],
         "summary": "Delete customer (soft delete)",
-        "tags": [
-          "Customers"
-        ]
+        "tags": ["Customers"]
       }
     },
-    "/api/v1/v1/customers/{id}/reservations": {
+    "/api/v1/customers/{id}/reservations": {
       "get": {
-        "operationId": "CustomersController_getReservationHistory_v1",
+        "operationId": "CustomersController_getReservationHistory",
         "parameters": [
           {
             "name": "id",
@@ -761,14 +706,12 @@
           }
         ],
         "summary": "Get customer reservation history",
-        "tags": [
-          "Customers"
-        ]
+        "tags": ["Customers"]
       }
     },
-    "/api/v1/v1/customers/{id}/restore": {
+    "/api/v1/customers/{id}/restore": {
       "post": {
-        "operationId": "CustomersController_restore_v1",
+        "operationId": "CustomersController_restore",
         "parameters": [
           {
             "name": "id",
@@ -794,14 +737,12 @@
           }
         ],
         "summary": "Restore deleted customer",
-        "tags": [
-          "Customers"
-        ]
+        "tags": ["Customers"]
       }
     },
-    "/api/v1/v1/rooms": {
+    "/api/v1/rooms": {
       "post": {
-        "operationId": "RoomsController_create_v1",
+        "operationId": "RoomsController_create",
         "parameters": [],
         "requestBody": {
           "required": true,
@@ -830,12 +771,10 @@
           }
         ],
         "summary": "Create a new room",
-        "tags": [
-          "Rooms"
-        ]
+        "tags": ["Rooms"]
       },
       "get": {
-        "operationId": "RoomsController_findAll_v1",
+        "operationId": "RoomsController_findAll",
         "parameters": [
           {
             "name": "page",
@@ -877,10 +816,7 @@
             "schema": {
               "default": "desc",
               "type": "string",
-              "enum": [
-                "asc",
-                "desc"
-              ]
+              "enum": ["asc", "desc"]
             }
           },
           {
@@ -899,15 +835,7 @@
             "description": "Filter by room type",
             "schema": {
               "type": "string",
-              "enum": [
-                "SINGLE",
-                "DOUBLE",
-                "TWIN",
-                "SUITE",
-                "DELUXE",
-                "PRESIDENTIAL",
-                "FAMILY"
-              ]
+              "enum": ["SINGLE", "DOUBLE", "TWIN", "SUITE", "DELUXE", "PRESIDENTIAL", "FAMILY"]
             }
           },
           {
@@ -975,14 +903,12 @@
           }
         ],
         "summary": "Get all rooms with pagination and filters",
-        "tags": [
-          "Rooms"
-        ]
+        "tags": ["Rooms"]
       }
     },
-    "/api/v1/v1/rooms/stats": {
+    "/api/v1/rooms/stats": {
       "get": {
-        "operationId": "RoomsController_getStats_v1",
+        "operationId": "RoomsController_getStats",
         "parameters": [],
         "responses": {
           "200": {
@@ -995,14 +921,12 @@
           }
         ],
         "summary": "Get room statistics",
-        "tags": [
-          "Rooms"
-        ]
+        "tags": ["Rooms"]
       }
     },
-    "/api/v1/v1/rooms/availability": {
+    "/api/v1/rooms/availability": {
       "get": {
-        "operationId": "RoomsController_checkAvailability_v1",
+        "operationId": "RoomsController_checkAvailability",
         "parameters": [
           {
             "name": "checkInDate",
@@ -1031,15 +955,7 @@
             "description": "Filter by room type",
             "schema": {
               "type": "string",
-              "enum": [
-                "SINGLE",
-                "DOUBLE",
-                "TWIN",
-                "SUITE",
-                "DELUXE",
-                "PRESIDENTIAL",
-                "FAMILY"
-              ]
+              "enum": ["SINGLE", "DOUBLE", "TWIN", "SUITE", "DELUXE", "PRESIDENTIAL", "FAMILY"]
             }
           },
           {
@@ -1063,14 +979,12 @@
           }
         ],
         "summary": "Check room availability for dates",
-        "tags": [
-          "Rooms"
-        ]
+        "tags": ["Rooms"]
       }
     },
-    "/api/v1/v1/rooms/{id}": {
+    "/api/v1/rooms/{id}": {
       "get": {
-        "operationId": "RoomsController_findOne_v1",
+        "operationId": "RoomsController_findOne",
         "parameters": [
           {
             "name": "id",
@@ -1096,12 +1010,10 @@
           }
         ],
         "summary": "Get room by ID",
-        "tags": [
-          "Rooms"
-        ]
+        "tags": ["Rooms"]
       },
       "patch": {
-        "operationId": "RoomsController_update_v1",
+        "operationId": "RoomsController_update",
         "parameters": [
           {
             "name": "id",
@@ -1137,12 +1049,10 @@
           }
         ],
         "summary": "Update room",
-        "tags": [
-          "Rooms"
-        ]
+        "tags": ["Rooms"]
       },
       "delete": {
-        "operationId": "RoomsController_remove_v1",
+        "operationId": "RoomsController_remove",
         "parameters": [
           {
             "name": "id",
@@ -1171,14 +1081,12 @@
           }
         ],
         "summary": "Delete room (soft delete)",
-        "tags": [
-          "Rooms"
-        ]
+        "tags": ["Rooms"]
       }
     },
-    "/api/v1/v1/rooms/{id}/status": {
+    "/api/v1/rooms/{id}/status": {
       "patch": {
-        "operationId": "RoomsController_updateStatus_v1",
+        "operationId": "RoomsController_updateStatus",
         "parameters": [
           {
             "name": "id",
@@ -1204,14 +1112,12 @@
           }
         ],
         "summary": "Update room status",
-        "tags": [
-          "Rooms"
-        ]
+        "tags": ["Rooms"]
       }
     },
-    "/api/v1/v1/rooms/{id}/restore": {
+    "/api/v1/rooms/{id}/restore": {
       "post": {
-        "operationId": "RoomsController_restore_v1",
+        "operationId": "RoomsController_restore",
         "parameters": [
           {
             "name": "id",
@@ -1237,14 +1143,12 @@
           }
         ],
         "summary": "Restore deleted room",
-        "tags": [
-          "Rooms"
-        ]
+        "tags": ["Rooms"]
       }
     },
-    "/api/v1/v1/reservations": {
+    "/api/v1/reservations": {
       "post": {
-        "operationId": "ReservationsController_create_v1",
+        "operationId": "ReservationsController_create",
         "parameters": [],
         "requestBody": {
           "required": true,
@@ -1276,12 +1180,10 @@
           }
         ],
         "summary": "Create a new reservation",
-        "tags": [
-          "Reservations"
-        ]
+        "tags": ["Reservations"]
       },
       "get": {
-        "operationId": "ReservationsController_findAll_v1",
+        "operationId": "ReservationsController_findAll",
         "parameters": [
           {
             "name": "page",
@@ -1323,10 +1225,7 @@
             "schema": {
               "default": "desc",
               "type": "string",
-              "enum": [
-                "asc",
-                "desc"
-              ]
+              "enum": ["asc", "desc"]
             }
           },
           {
@@ -1345,14 +1244,7 @@
             "description": "Filter by status",
             "schema": {
               "type": "string",
-              "enum": [
-                "PENDING",
-                "CONFIRMED",
-                "CHECKED_IN",
-                "CHECKED_OUT",
-                "CANCELLED",
-                "NO_SHOW"
-              ]
+              "enum": ["PENDING", "CONFIRMED", "CHECKED_IN", "CHECKED_OUT", "CANCELLED", "NO_SHOW"]
             }
           },
           {
@@ -1421,14 +1313,12 @@
           }
         ],
         "summary": "Get all reservations with pagination and filters",
-        "tags": [
-          "Reservations"
-        ]
+        "tags": ["Reservations"]
       }
     },
-    "/api/v1/v1/reservations/today/arrivals": {
+    "/api/v1/reservations/today/arrivals": {
       "get": {
-        "operationId": "ReservationsController_getTodayArrivals_v1",
+        "operationId": "ReservationsController_getTodayArrivals",
         "parameters": [],
         "responses": {
           "200": {
@@ -1441,14 +1331,12 @@
           }
         ],
         "summary": "Get today arrivals",
-        "tags": [
-          "Reservations"
-        ]
+        "tags": ["Reservations"]
       }
     },
-    "/api/v1/v1/reservations/today/departures": {
+    "/api/v1/reservations/today/departures": {
       "get": {
-        "operationId": "ReservationsController_getTodayDepartures_v1",
+        "operationId": "ReservationsController_getTodayDepartures",
         "parameters": [],
         "responses": {
           "200": {
@@ -1461,14 +1349,12 @@
           }
         ],
         "summary": "Get today departures",
-        "tags": [
-          "Reservations"
-        ]
+        "tags": ["Reservations"]
       }
     },
-    "/api/v1/v1/reservations/code/{code}": {
+    "/api/v1/reservations/code/{code}": {
       "get": {
-        "operationId": "ReservationsController_findByCode_v1",
+        "operationId": "ReservationsController_findByCode",
         "parameters": [
           {
             "name": "code",
@@ -1494,14 +1380,12 @@
           }
         ],
         "summary": "Get reservation by code",
-        "tags": [
-          "Reservations"
-        ]
+        "tags": ["Reservations"]
       }
     },
-    "/api/v1/v1/reservations/{id}": {
+    "/api/v1/reservations/{id}": {
       "get": {
-        "operationId": "ReservationsController_findOne_v1",
+        "operationId": "ReservationsController_findOne",
         "parameters": [
           {
             "name": "id",
@@ -1527,12 +1411,10 @@
           }
         ],
         "summary": "Get reservation by ID",
-        "tags": [
-          "Reservations"
-        ]
+        "tags": ["Reservations"]
       },
       "patch": {
-        "operationId": "ReservationsController_update_v1",
+        "operationId": "ReservationsController_update",
         "parameters": [
           {
             "name": "id",
@@ -1571,12 +1453,10 @@
           }
         ],
         "summary": "Update reservation",
-        "tags": [
-          "Reservations"
-        ]
+        "tags": ["Reservations"]
       },
       "delete": {
-        "operationId": "ReservationsController_remove_v1",
+        "operationId": "ReservationsController_remove",
         "parameters": [
           {
             "name": "id",
@@ -1602,14 +1482,12 @@
           }
         ],
         "summary": "Delete reservation (soft delete)",
-        "tags": [
-          "Reservations"
-        ]
+        "tags": ["Reservations"]
       }
     },
-    "/api/v1/v1/reservations/{id}/confirm": {
+    "/api/v1/reservations/{id}/confirm": {
       "post": {
-        "operationId": "ReservationsController_confirm_v1",
+        "operationId": "ReservationsController_confirm",
         "parameters": [
           {
             "name": "id",
@@ -1635,14 +1513,12 @@
           }
         ],
         "summary": "Confirm reservation",
-        "tags": [
-          "Reservations"
-        ]
+        "tags": ["Reservations"]
       }
     },
-    "/api/v1/v1/reservations/{id}/check-in": {
+    "/api/v1/reservations/{id}/check-in": {
       "post": {
-        "operationId": "ReservationsController_checkIn_v1",
+        "operationId": "ReservationsController_checkIn",
         "parameters": [
           {
             "name": "id",
@@ -1678,14 +1554,12 @@
           }
         ],
         "summary": "Check-in guest",
-        "tags": [
-          "Reservations"
-        ]
+        "tags": ["Reservations"]
       }
     },
-    "/api/v1/v1/reservations/{id}/check-out": {
+    "/api/v1/reservations/{id}/check-out": {
       "post": {
-        "operationId": "ReservationsController_checkOut_v1",
+        "operationId": "ReservationsController_checkOut",
         "parameters": [
           {
             "name": "id",
@@ -1721,14 +1595,12 @@
           }
         ],
         "summary": "Check-out guest",
-        "tags": [
-          "Reservations"
-        ]
+        "tags": ["Reservations"]
       }
     },
-    "/api/v1/v1/reservations/{id}/cancel": {
+    "/api/v1/reservations/{id}/cancel": {
       "post": {
-        "operationId": "ReservationsController_cancel_v1",
+        "operationId": "ReservationsController_cancel",
         "parameters": [
           {
             "name": "id",
@@ -1754,14 +1626,12 @@
           }
         ],
         "summary": "Cancel reservation",
-        "tags": [
-          "Reservations"
-        ]
+        "tags": ["Reservations"]
       }
     },
-    "/api/v1/v1/reservations/{id}/no-show": {
+    "/api/v1/reservations/{id}/no-show": {
       "post": {
-        "operationId": "ReservationsController_markNoShow_v1",
+        "operationId": "ReservationsController_markNoShow",
         "parameters": [
           {
             "name": "id",
@@ -1787,31 +1657,35 @@
           }
         ],
         "summary": "Mark reservation as no-show",
-        "tags": [
-          "Reservations"
-        ]
+        "tags": ["Reservations"]
       }
     },
-    "/api/v1/v1/services": {
+    "/api/v1/reservations/multi-room": {
       "post": {
-        "operationId": "ServicesController_create_v1",
+        "operationId": "MultiRoomReservationsController_create",
         "parameters": [],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CreateServiceDto"
+                "$ref": "#/components/schemas/CreateMultiRoomReservationDto"
               }
             }
           }
         },
         "responses": {
           "201": {
-            "description": "Service created successfully"
+            "description": "Multi-room reservation created successfully"
           },
           "400": {
             "description": "Bad request"
+          },
+          "404": {
+            "description": "Customer or room not found"
+          },
+          "409": {
+            "description": "One or more rooms are not available for selected dates"
           }
         },
         "security": [
@@ -1819,13 +1693,11 @@
             "bearer": []
           }
         ],
-        "summary": "Create a new service",
-        "tags": [
-          "Additional Services"
-        ]
+        "summary": "Create a multi-room reservation",
+        "tags": ["Reservations"]
       },
       "get": {
-        "operationId": "ServicesController_findAll_v1",
+        "operationId": "MultiRoomReservationsController_findAll",
         "parameters": [
           {
             "name": "page",
@@ -1867,10 +1739,285 @@
             "schema": {
               "default": "desc",
               "type": "string",
-              "enum": [
-                "asc",
-                "desc"
-              ]
+              "enum": ["asc", "desc"]
+            }
+          },
+          {
+            "name": "search",
+            "required": false,
+            "in": "query",
+            "description": "Search query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "customerId",
+            "required": false,
+            "in": "query",
+            "description": "Filter by customer ID",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "roomId",
+            "required": false,
+            "in": "query",
+            "description": "Filter by room ID",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "checkInFrom",
+            "required": false,
+            "in": "query",
+            "description": "Filter by check-in date from",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "checkInTo",
+            "required": false,
+            "in": "query",
+            "description": "Filter by check-in date to",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "checkOutFrom",
+            "required": false,
+            "in": "query",
+            "description": "Filter by check-out date from",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "checkOutTo",
+            "required": false,
+            "in": "query",
+            "description": "Filter by check-out date to",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of multi-room reservations"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Get all multi-room reservations with pagination and filters",
+        "tags": ["Reservations"]
+      }
+    },
+    "/api/v1/reservations/multi-room/code/{code}": {
+      "get": {
+        "operationId": "MultiRoomReservationsController_findByCode",
+        "parameters": [
+          {
+            "name": "code",
+            "required": true,
+            "in": "path",
+            "description": "Multi-room reservation code",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Multi-room reservation details"
+          },
+          "404": {
+            "description": "Multi-room reservation not found"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Get multi-room reservation by code",
+        "tags": ["Reservations"]
+      }
+    },
+    "/api/v1/reservations/multi-room/{id}": {
+      "get": {
+        "operationId": "MultiRoomReservationsController_findOne",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Multi-room reservation UUID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Multi-room reservation details"
+          },
+          "404": {
+            "description": "Multi-room reservation not found"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Get multi-room reservation by ID",
+        "tags": ["Reservations"]
+      }
+    },
+    "/api/v1/reservations/multi-room/{id}/confirm": {
+      "post": {
+        "operationId": "MultiRoomReservationsController_confirm",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Multi-room reservation UUID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Multi-room reservation confirmed"
+          },
+          "400": {
+            "description": "Cannot confirm multi-room reservation"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Confirm all reservations in a multi-room reservation",
+        "tags": ["Reservations"]
+      }
+    },
+    "/api/v1/reservations/multi-room/{id}/cancel": {
+      "post": {
+        "operationId": "MultiRoomReservationsController_cancel",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Multi-room reservation UUID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Multi-room reservation cancelled"
+          },
+          "400": {
+            "description": "Cannot cancel multi-room reservation"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Cancel all eligible reservations in a multi-room reservation",
+        "tags": ["Reservations"]
+      }
+    },
+    "/api/v1/services": {
+      "post": {
+        "operationId": "ServicesController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateServiceDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Service created successfully"
+          },
+          "400": {
+            "description": "Bad request"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Create a new service",
+        "tags": ["Additional Services"]
+      },
+      "get": {
+        "operationId": "ServicesController_findAll",
+        "parameters": [
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "description": "Page number",
+            "schema": {
+              "minimum": 1,
+              "default": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "description": "Items per page",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "default": 10,
+              "type": "number"
+            }
+          },
+          {
+            "name": "sortBy",
+            "required": false,
+            "in": "query",
+            "description": "Sort field",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sortOrder",
+            "required": false,
+            "in": "query",
+            "description": "Sort order",
+            "schema": {
+              "default": "desc",
+              "type": "string",
+              "enum": ["asc", "desc"]
             }
           },
           {
@@ -1889,14 +2036,7 @@
             "description": "Filter by category",
             "schema": {
               "type": "string",
-              "enum": [
-                "RESTAURANT",
-                "SPA",
-                "TRANSPORT",
-                "LAUNDRY",
-                "ROOM_SERVICE",
-                "OTHER"
-              ]
+              "enum": ["RESTAURANT", "SPA", "TRANSPORT", "LAUNDRY", "ROOM_SERVICE", "OTHER"]
             }
           },
           {
@@ -1920,28 +2060,19 @@
           }
         ],
         "summary": "Get all services with pagination and filters",
-        "tags": [
-          "Additional Services"
-        ]
+        "tags": ["Additional Services"]
       }
     },
-    "/api/v1/v1/services/category/{category}": {
+    "/api/v1/services/category/{category}": {
       "get": {
-        "operationId": "ServicesController_getByCategory_v1",
+        "operationId": "ServicesController_getByCategory",
         "parameters": [
           {
             "name": "category",
             "required": true,
             "in": "path",
             "schema": {
-              "enum": [
-                "RESTAURANT",
-                "SPA",
-                "TRANSPORT",
-                "LAUNDRY",
-                "ROOM_SERVICE",
-                "OTHER"
-              ],
+              "enum": ["RESTAURANT", "SPA", "TRANSPORT", "LAUNDRY", "ROOM_SERVICE", "OTHER"],
               "type": "string"
             }
           }
@@ -1957,14 +2088,12 @@
           }
         ],
         "summary": "Get services by category",
-        "tags": [
-          "Additional Services"
-        ]
+        "tags": ["Additional Services"]
       }
     },
-    "/api/v1/v1/services/{id}": {
+    "/api/v1/services/{id}": {
       "get": {
-        "operationId": "ServicesController_findOne_v1",
+        "operationId": "ServicesController_findOne",
         "parameters": [
           {
             "name": "id",
@@ -1990,12 +2119,10 @@
           }
         ],
         "summary": "Get service by ID",
-        "tags": [
-          "Additional Services"
-        ]
+        "tags": ["Additional Services"]
       },
       "patch": {
-        "operationId": "ServicesController_update_v1",
+        "operationId": "ServicesController_update",
         "parameters": [
           {
             "name": "id",
@@ -2031,12 +2158,10 @@
           }
         ],
         "summary": "Update service",
-        "tags": [
-          "Additional Services"
-        ]
+        "tags": ["Additional Services"]
       },
       "delete": {
-        "operationId": "ServicesController_remove_v1",
+        "operationId": "ServicesController_remove",
         "parameters": [
           {
             "name": "id",
@@ -2062,14 +2187,12 @@
           }
         ],
         "summary": "Delete service (soft delete)",
-        "tags": [
-          "Additional Services"
-        ]
+        "tags": ["Additional Services"]
       }
     },
-    "/api/v1/v1/services/reservation": {
+    "/api/v1/services/reservation": {
       "post": {
-        "operationId": "ServicesController_addToReservation_v1",
+        "operationId": "ServicesController_addToReservation",
         "parameters": [],
         "requestBody": {
           "required": true,
@@ -2095,14 +2218,12 @@
           }
         ],
         "summary": "Add service to reservation",
-        "tags": [
-          "Additional Services"
-        ]
+        "tags": ["Additional Services"]
       }
     },
-    "/api/v1/v1/services/reservation/{id}": {
+    "/api/v1/services/reservation/{id}": {
       "delete": {
-        "operationId": "ServicesController_removeFromReservation_v1",
+        "operationId": "ServicesController_removeFromReservation",
         "parameters": [
           {
             "name": "id",
@@ -2128,14 +2249,12 @@
           }
         ],
         "summary": "Remove service from reservation",
-        "tags": [
-          "Additional Services"
-        ]
+        "tags": ["Additional Services"]
       }
     },
-    "/api/v1/v1/services/reservation/{reservationId}": {
+    "/api/v1/services/reservation/{reservationId}": {
       "get": {
-        "operationId": "ServicesController_getReservationServices_v1",
+        "operationId": "ServicesController_getReservationServices",
         "parameters": [
           {
             "name": "reservationId",
@@ -2158,14 +2277,12 @@
           }
         ],
         "summary": "Get services for a reservation",
-        "tags": [
-          "Additional Services"
-        ]
+        "tags": ["Additional Services"]
       }
     },
-    "/api/v1/v1/housekeeping": {
+    "/api/v1/housekeeping": {
       "post": {
-        "operationId": "HousekeepingController_create_v1",
+        "operationId": "HousekeepingController_create",
         "parameters": [],
         "requestBody": {
           "required": true,
@@ -2194,12 +2311,10 @@
           }
         ],
         "summary": "Create a new cleaning task",
-        "tags": [
-          "Housekeeping"
-        ]
+        "tags": ["Housekeeping"]
       },
       "get": {
-        "operationId": "HousekeepingController_findAll_v1",
+        "operationId": "HousekeepingController_findAll",
         "parameters": [
           {
             "name": "page",
@@ -2241,10 +2356,7 @@
             "schema": {
               "default": "desc",
               "type": "string",
-              "enum": [
-                "asc",
-                "desc"
-              ]
+              "enum": ["asc", "desc"]
             }
           },
           {
@@ -2263,11 +2375,7 @@
             "description": "Filter by status",
             "schema": {
               "type": "string",
-              "enum": [
-                "PENDING",
-                "IN_PROGRESS",
-                "COMPLETED"
-              ]
+              "enum": ["PENDING", "IN_PROGRESS", "COMPLETED"]
             }
           },
           {
@@ -2318,14 +2426,12 @@
           }
         ],
         "summary": "Get all cleaning tasks with pagination and filters",
-        "tags": [
-          "Housekeeping"
-        ]
+        "tags": ["Housekeeping"]
       }
     },
-    "/api/v1/v1/housekeeping/today": {
+    "/api/v1/housekeeping/today": {
       "get": {
-        "operationId": "HousekeepingController_getTodayTasks_v1",
+        "operationId": "HousekeepingController_getTodayTasks",
         "parameters": [],
         "responses": {
           "200": {
@@ -2338,14 +2444,12 @@
           }
         ],
         "summary": "Get today cleaning tasks",
-        "tags": [
-          "Housekeeping"
-        ]
+        "tags": ["Housekeeping"]
       }
     },
-    "/api/v1/v1/housekeeping/pending": {
+    "/api/v1/housekeeping/pending": {
       "get": {
-        "operationId": "HousekeepingController_getPendingTasks_v1",
+        "operationId": "HousekeepingController_getPendingTasks",
         "parameters": [],
         "responses": {
           "200": {
@@ -2358,14 +2462,12 @@
           }
         ],
         "summary": "Get pending cleaning tasks",
-        "tags": [
-          "Housekeeping"
-        ]
+        "tags": ["Housekeeping"]
       }
     },
-    "/api/v1/v1/housekeeping/my-tasks": {
+    "/api/v1/housekeeping/my-tasks": {
       "get": {
-        "operationId": "HousekeepingController_getMyTasks_v1",
+        "operationId": "HousekeepingController_getMyTasks",
         "parameters": [],
         "responses": {
           "200": {
@@ -2378,14 +2480,12 @@
           }
         ],
         "summary": "Get my assigned tasks (Housekeeping only)",
-        "tags": [
-          "Housekeeping"
-        ]
+        "tags": ["Housekeeping"]
       }
     },
-    "/api/v1/v1/housekeeping/room/{roomId}/history": {
+    "/api/v1/housekeeping/room/{roomId}/history": {
       "get": {
-        "operationId": "HousekeepingController_getRoomHistory_v1",
+        "operationId": "HousekeepingController_getRoomHistory",
         "parameters": [
           {
             "name": "roomId",
@@ -2411,14 +2511,12 @@
           }
         ],
         "summary": "Get cleaning history for a room",
-        "tags": [
-          "Housekeeping"
-        ]
+        "tags": ["Housekeeping"]
       }
     },
-    "/api/v1/v1/housekeeping/employee/{employeeId}/tasks": {
+    "/api/v1/housekeeping/employee/{employeeId}/tasks": {
       "get": {
-        "operationId": "HousekeepingController_getEmployeeTasks_v1",
+        "operationId": "HousekeepingController_getEmployeeTasks",
         "parameters": [
           {
             "name": "employeeId",
@@ -2444,14 +2542,12 @@
           }
         ],
         "summary": "Get tasks assigned to an employee",
-        "tags": [
-          "Housekeeping"
-        ]
+        "tags": ["Housekeeping"]
       }
     },
-    "/api/v1/v1/housekeeping/{id}": {
+    "/api/v1/housekeeping/{id}": {
       "get": {
-        "operationId": "HousekeepingController_findOne_v1",
+        "operationId": "HousekeepingController_findOne",
         "parameters": [
           {
             "name": "id",
@@ -2477,12 +2573,10 @@
           }
         ],
         "summary": "Get cleaning task by ID",
-        "tags": [
-          "Housekeeping"
-        ]
+        "tags": ["Housekeeping"]
       },
       "patch": {
-        "operationId": "HousekeepingController_update_v1",
+        "operationId": "HousekeepingController_update",
         "parameters": [
           {
             "name": "id",
@@ -2518,12 +2612,10 @@
           }
         ],
         "summary": "Update cleaning task",
-        "tags": [
-          "Housekeeping"
-        ]
+        "tags": ["Housekeeping"]
       },
       "delete": {
-        "operationId": "HousekeepingController_remove_v1",
+        "operationId": "HousekeepingController_remove",
         "parameters": [
           {
             "name": "id",
@@ -2549,14 +2641,12 @@
           }
         ],
         "summary": "Delete cleaning task",
-        "tags": [
-          "Housekeeping"
-        ]
+        "tags": ["Housekeeping"]
       }
     },
-    "/api/v1/v1/housekeeping/{id}/assign": {
+    "/api/v1/housekeeping/{id}/assign": {
       "patch": {
-        "operationId": "HousekeepingController_assignTask_v1",
+        "operationId": "HousekeepingController_assignTask",
         "parameters": [
           {
             "name": "id",
@@ -2592,14 +2682,12 @@
           }
         ],
         "summary": "Assign task to an employee",
-        "tags": [
-          "Housekeeping"
-        ]
+        "tags": ["Housekeeping"]
       }
     },
-    "/api/v1/v1/housekeeping/{id}/start": {
+    "/api/v1/housekeeping/{id}/start": {
       "post": {
-        "operationId": "HousekeepingController_startTask_v1",
+        "operationId": "HousekeepingController_startTask",
         "parameters": [
           {
             "name": "id",
@@ -2625,14 +2713,12 @@
           }
         ],
         "summary": "Start a cleaning task",
-        "tags": [
-          "Housekeeping"
-        ]
+        "tags": ["Housekeeping"]
       }
     },
-    "/api/v1/v1/housekeeping/{id}/complete": {
+    "/api/v1/housekeeping/{id}/complete": {
       "post": {
-        "operationId": "HousekeepingController_completeTask_v1",
+        "operationId": "HousekeepingController_completeTask",
         "parameters": [
           {
             "name": "id",
@@ -2668,9 +2754,7 @@
           }
         ],
         "summary": "Complete a cleaning task",
-        "tags": [
-          "Housekeeping"
-        ]
+        "tags": ["Housekeeping"]
       }
     }
   },
@@ -2737,10 +2821,7 @@
             "description": "Employee password"
           }
         },
-        "required": [
-          "email",
-          "password"
-        ]
+        "required": ["email", "password"]
       },
       "RefreshTokenDto": {
         "type": "object",
@@ -2750,9 +2831,7 @@
             "description": "Refresh token"
           }
         },
-        "required": [
-          "refreshToken"
-        ]
+        "required": ["refreshToken"]
       },
       "CreateEmployeeDto": {
         "type": "object",
@@ -2779,33 +2858,18 @@
           },
           "role": {
             "type": "string",
-            "enum": [
-              "ADMIN",
-              "MANAGER",
-              "RECEPTIONIST",
-              "HOUSEKEEPING"
-            ],
+            "enum": ["ADMIN", "MANAGER", "RECEPTIONIST", "HOUSEKEEPING"],
             "default": "RECEPTIONIST",
             "description": "Employee role"
           },
           "status": {
             "type": "string",
-            "enum": [
-              "ACTIVE",
-              "INACTIVE",
-              "ON_LEAVE",
-              "TERMINATED"
-            ],
+            "enum": ["ACTIVE", "INACTIVE", "ON_LEAVE", "TERMINATED"],
             "default": "ACTIVE",
             "description": "Employee status"
           }
         },
-        "required": [
-          "firstName",
-          "lastName",
-          "email",
-          "password"
-        ]
+        "required": ["firstName", "lastName", "email", "password"]
       },
       "UpdateEmployeeDto": {
         "type": "object",
@@ -2822,23 +2886,13 @@
           },
           "role": {
             "type": "string",
-            "enum": [
-              "ADMIN",
-              "MANAGER",
-              "RECEPTIONIST",
-              "HOUSEKEEPING"
-            ],
+            "enum": ["ADMIN", "MANAGER", "RECEPTIONIST", "HOUSEKEEPING"],
             "default": "RECEPTIONIST",
             "description": "Employee role"
           },
           "status": {
             "type": "string",
-            "enum": [
-              "ACTIVE",
-              "INACTIVE",
-              "ON_LEAVE",
-              "TERMINATED"
-            ],
+            "enum": ["ACTIVE", "INACTIVE", "ON_LEAVE", "TERMINATED"],
             "default": "ACTIVE",
             "description": "Employee status"
           },
@@ -2888,12 +2942,7 @@
           },
           "documentType": {
             "type": "string",
-            "enum": [
-              "PASSPORT",
-              "NATIONAL_ID",
-              "DRIVERS_LICENSE",
-              "OTHER"
-            ],
+            "enum": ["PASSPORT", "NATIONAL_ID", "DRIVERS_LICENSE", "OTHER"],
             "description": "Document type"
           },
           "documentNumber": {
@@ -2917,13 +2966,7 @@
             "description": "Birth date"
           }
         },
-        "required": [
-          "firstName",
-          "lastName",
-          "email",
-          "documentType",
-          "documentNumber"
-        ]
+        "required": ["firstName", "lastName", "email", "documentType", "documentNumber"]
       },
       "UpdateCustomerDto": {
         "type": "object",
@@ -2950,12 +2993,7 @@
           },
           "documentType": {
             "type": "string",
-            "enum": [
-              "PASSPORT",
-              "NATIONAL_ID",
-              "DRIVERS_LICENSE",
-              "OTHER"
-            ],
+            "enum": ["PASSPORT", "NATIONAL_ID", "DRIVERS_LICENSE", "OTHER"],
             "description": "Document type"
           },
           "documentNumber": {
@@ -2995,15 +3033,7 @@
           },
           "type": {
             "type": "string",
-            "enum": [
-              "SINGLE",
-              "DOUBLE",
-              "TWIN",
-              "SUITE",
-              "DELUXE",
-              "PRESIDENTIAL",
-              "FAMILY"
-            ],
+            "enum": ["SINGLE", "DOUBLE", "TWIN", "SUITE", "DELUXE", "PRESIDENTIAL", "FAMILY"],
             "description": "Room type"
           },
           "status": {
@@ -3034,9 +3064,7 @@
             "description": "Description"
           },
           "images": {
-            "example": [
-              "https://example.com/room1.jpg"
-            ],
+            "example": ["https://example.com/room1.jpg"],
             "description": "Room images URLs",
             "type": "array",
             "items": {
@@ -3044,12 +3072,7 @@
             }
           },
           "amenities": {
-            "example": [
-              "WiFi",
-              "TV",
-              "Mini Bar",
-              "Air Conditioning"
-            ],
+            "example": ["WiFi", "TV", "Mini Bar", "Air Conditioning"],
             "description": "Room amenities",
             "type": "array",
             "items": {
@@ -3057,13 +3080,7 @@
             }
           }
         },
-        "required": [
-          "number",
-          "floor",
-          "type",
-          "pricePerNight",
-          "capacity"
-        ]
+        "required": ["number", "floor", "type", "pricePerNight", "capacity"]
       },
       "UpdateRoomDto": {
         "type": "object",
@@ -3075,15 +3092,7 @@
           },
           "type": {
             "type": "string",
-            "enum": [
-              "SINGLE",
-              "DOUBLE",
-              "TWIN",
-              "SUITE",
-              "DELUXE",
-              "PRESIDENTIAL",
-              "FAMILY"
-            ],
+            "enum": ["SINGLE", "DOUBLE", "TWIN", "SUITE", "DELUXE", "PRESIDENTIAL", "FAMILY"],
             "description": "Room type"
           },
           "status": {
@@ -3114,9 +3123,7 @@
             "description": "Description"
           },
           "images": {
-            "example": [
-              "https://example.com/room1.jpg"
-            ],
+            "example": ["https://example.com/room1.jpg"],
             "description": "Room images URLs",
             "type": "array",
             "items": {
@@ -3124,12 +3131,7 @@
             }
           },
           "amenities": {
-            "example": [
-              "WiFi",
-              "TV",
-              "Mini Bar",
-              "Air Conditioning"
-            ],
+            "example": ["WiFi", "TV", "Mini Bar", "Air Conditioning"],
             "description": "Room amenities",
             "type": "array",
             "items": {
@@ -3176,12 +3178,7 @@
             "description": "Notes"
           }
         },
-        "required": [
-          "customerId",
-          "roomId",
-          "checkInDate",
-          "checkOutDate"
-        ]
+        "required": ["customerId", "roomId", "checkInDate", "checkOutDate"]
       },
       "UpdateReservationDto": {
         "type": "object",
@@ -3214,14 +3211,7 @@
           },
           "status": {
             "type": "string",
-            "enum": [
-              "PENDING",
-              "CONFIRMED",
-              "CHECKED_IN",
-              "CHECKED_OUT",
-              "CANCELLED",
-              "NO_SHOW"
-            ],
+            "enum": ["PENDING", "CONFIRMED", "CHECKED_IN", "CHECKED_OUT", "CANCELLED", "NO_SHOW"],
             "description": "Reservation status"
           }
         }
@@ -3244,6 +3234,63 @@
           }
         }
       },
+      "CreateMultiRoomReservationRoomDto": {
+        "type": "object",
+        "properties": {
+          "roomId": {
+            "type": "string",
+            "description": "Room ID"
+          },
+          "adults": {
+            "type": "number",
+            "example": 1,
+            "default": 1,
+            "description": "Number of adults for this room"
+          },
+          "children": {
+            "type": "number",
+            "example": 0,
+            "default": 0,
+            "description": "Number of children for this room"
+          },
+          "notes": {
+            "type": "string",
+            "description": "Room-specific notes"
+          }
+        },
+        "required": ["roomId"]
+      },
+      "CreateMultiRoomReservationDto": {
+        "type": "object",
+        "properties": {
+          "customerId": {
+            "type": "string",
+            "description": "Customer ID"
+          },
+          "checkInDate": {
+            "type": "string",
+            "example": "2026-07-01",
+            "description": "Shared check-in date"
+          },
+          "checkOutDate": {
+            "type": "string",
+            "example": "2026-07-05",
+            "description": "Shared check-out date"
+          },
+          "rooms": {
+            "description": "Rooms to include in the same booking operation",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CreateMultiRoomReservationRoomDto"
+            }
+          },
+          "notes": {
+            "type": "string",
+            "description": "General notes for the multi-room reservation"
+          }
+        },
+        "required": ["customerId", "checkInDate", "checkOutDate", "rooms"]
+      },
       "CreateServiceDto": {
         "type": "object",
         "properties": {
@@ -3263,14 +3310,7 @@
           },
           "category": {
             "type": "string",
-            "enum": [
-              "RESTAURANT",
-              "SPA",
-              "TRANSPORT",
-              "LAUNDRY",
-              "ROOM_SERVICE",
-              "OTHER"
-            ],
+            "enum": ["RESTAURANT", "SPA", "TRANSPORT", "LAUNDRY", "ROOM_SERVICE", "OTHER"],
             "description": "Service category"
           },
           "active": {
@@ -3279,11 +3319,7 @@
             "description": "Whether service is active"
           }
         },
-        "required": [
-          "name",
-          "price",
-          "category"
-        ]
+        "required": ["name", "price", "category"]
       },
       "UpdateServiceDto": {
         "type": "object",
@@ -3304,14 +3340,7 @@
           },
           "category": {
             "type": "string",
-            "enum": [
-              "RESTAURANT",
-              "SPA",
-              "TRANSPORT",
-              "LAUNDRY",
-              "ROOM_SERVICE",
-              "OTHER"
-            ],
+            "enum": ["RESTAURANT", "SPA", "TRANSPORT", "LAUNDRY", "ROOM_SERVICE", "OTHER"],
             "description": "Service category"
           },
           "active": {
@@ -3343,10 +3372,7 @@
             "description": "Notes"
           }
         },
-        "required": [
-          "reservationId",
-          "serviceId"
-        ]
+        "required": ["reservationId", "serviceId"]
       },
       "CreateCleaningTaskDto": {
         "type": "object",
@@ -3375,10 +3401,7 @@
             "description": "Notes"
           }
         },
-        "required": [
-          "roomId",
-          "scheduledDate"
-        ]
+        "required": ["roomId", "scheduledDate"]
       },
       "UpdateCleaningTaskDto": {
         "type": "object",
@@ -3404,11 +3427,7 @@
           },
           "status": {
             "type": "string",
-            "enum": [
-              "PENDING",
-              "IN_PROGRESS",
-              "COMPLETED"
-            ],
+            "enum": ["PENDING", "IN_PROGRESS", "COMPLETED"],
             "description": "Task status"
           }
         }
