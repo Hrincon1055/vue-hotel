@@ -3,12 +3,13 @@
     <v-row>
       <v-col cols="12">
         <v-btn
+          color="primary"
           variant="text"
           prepend-icon="mdi-arrow-left"
-          :to="{ name: 'reservations-list' }"
           class="mb-4"
+          @click="$router.back()"
         >
-          Volver a la lista
+          Volver
         </v-btn>
       </v-col>
     </v-row>

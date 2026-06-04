@@ -413,8 +413,6 @@ interface RoomStats {
 
 ---
 
-## Módulo 5: Reservations (reservations)
-
 ### Información General
 
 | Campo                       | Valor                                                         |

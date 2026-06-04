@@ -91,6 +91,23 @@ const router = createRouter({
           name: 'reservations-edit',
           component: () => import('@/modules/reservations/views/ReservationFormView.vue'),
         },
+        // Multi-Room Reservations routes
+        {
+          path: '/reservations/multi-room',
+          name: 'reservations-multi-list',
+          component: () => import('@/modules/reservations/views/MultiRoomReservationsListView.vue'),
+        },
+        {
+          path: '/reservations/multi-room/new',
+          name: 'reservations-multi-create',
+          component: () => import('@/modules/reservations/views/MultiRoomReservationFormView.vue'),
+        },
+        {
+          path: '/reservations/multi-room/:id',
+          name: 'reservations-multi-detail',
+          component: () =>
+            import('@/modules/reservations/views/MultiRoomReservationDetailView.vue'),
+        },
       ],
     },
     {

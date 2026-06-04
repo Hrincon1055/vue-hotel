@@ -80,3 +80,48 @@ export interface PaginatedResponse<T> {
     totalPages: number;
   };
 }
+
+// ─── Multi-Room Reservations ────────────────────────────────────────────────
+
+export interface CreateMultiRoomReservationRoomDto {
+  roomId: string;
+  adults?: number;
+  children?: number;
+  notes?: string;
+}
+
+export interface CreateMultiRoomReservationDto {
+  customerId: string;
+  checkInDate: string;
+  checkOutDate: string;
+  rooms: CreateMultiRoomReservationRoomDto[];
+  notes?: string;
+}
+
+export interface MultiRoomReservation {
+  id: string;
+  reservationCode: string;
+  customerId: string;
+  customer?: Customer;
+  checkInDate: string;
+  checkOutDate: string;
+  reservations: Reservation[];
+  totalAmount: number;
+  notes?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface MultiRoomReservationFilters {
+  page?: number;
+  limit?: number;
+  sortBy?: string;
+  sortOrder?: 'asc' | 'desc';
+  search?: string;
+  customerId?: string;
+  roomId?: string;
+  checkInFrom?: string;
+  checkInTo?: string;
+  checkOutFrom?: string;
+  checkOutTo?: string;
+}

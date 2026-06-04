@@ -19,6 +19,19 @@
           to="/dashboard"
         ></v-list-item>
         <v-list-item
+          prepend-icon="mdi-calendar-check"
+          title="Reservas Multi-Hab."
+          value="reservations-multi"
+          to="/reservations/multi-room"
+        ></v-list-item>
+        <v-list-item
+          prepend-icon="mdi-calendar-check"
+          title="Reservaciones"
+          value="reservations"
+          to="/reservations"
+        ></v-list-item>
+
+        <v-list-item
           prepend-icon="mdi-account-multiple"
           title="Empleados"
           value="employees"
@@ -36,12 +49,19 @@
           value="rooms"
           to="/rooms"
         ></v-list-item>
-        <v-list-item
-          prepend-icon="mdi-calendar-check"
-          title="Reservaciones"
-          value="reservations"
-          to="/reservations"
+
+        <!-- <v-list-item
+          prepend-icon="mdi-room-service"
+          title="Servicios"
+          value="services"
+          to="/services"
         ></v-list-item>
+        <v-list-item
+          prepend-icon="mdi-broom"
+          title="Housekeeping"
+          value="housekeeping"
+          to="/housekeeping"
+        ></v-list-item> -->
       </v-list>
     </v-navigation-drawer>
     <v-main>
