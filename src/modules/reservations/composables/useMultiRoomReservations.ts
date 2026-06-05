@@ -71,6 +71,7 @@ export function useMultiRoomReservations(filters: Ref<MultiRoomReservationFilter
   } = useQuery({
     queryKey: [QUERY_KEY, filters],
     queryFn: () => multiRoomReservationsService.getAll(filters.value),
+    refetchOnMount: 'always',
   });
 
   const multiRoomReservations = computed(() => multiRoomData.value?.data ?? []);

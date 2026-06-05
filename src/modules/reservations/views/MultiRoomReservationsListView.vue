@@ -35,8 +35,32 @@
     <template #[`item.customer`]="{ item }">
       {{ getCustomerName(item) }}
     </template>
+    <template #[`item.status`]="{ item }">
+      <v-chip size="small" :color="getStatusColor(item.status as string)" variant="tonal" label>
+        {{ getStatusLabel(item.status as string) }}
+      </v-chip>
+    </template>
     <template #[`item.rooms`]="{ item }">
-      <v-chip size="small" color="primary" variant="tonal"> {{ getRoomsCount(item) }} hab. </v-chip>
+      <div class="d-flex flex-wrap ga-1">
+        <v-tooltip
+          v-for="res in item.reservations as ReservationRow[]"
+          :key="res.id"
+          :text="getStatusLabel(res.status)"
+          location="top"
+        >
+          <template #activator="{ props: tooltipProps }">
+            <v-chip
+              v-bind="tooltipProps"
+              size="small"
+              :color="getStatusColor(res.status)"
+              variant="tonal"
+              label
+            >
+              Hab. {{ res.room?.number ?? '-' }}
+            </v-chip>
+          </template>
+        </v-tooltip>
+      </div>
     </template>
     <template #[`item.checkInDate`]="{ value }">
       {{ formatDate(value as string) }}
@@ -63,32 +87,6 @@
                   params: { id: item.id as string },
                 })
               "
-            />
-          </template>
-        </v-tooltip>
-        <v-tooltip text="Confirmar todas" location="top">
-          <template #activator="{ props }">
-            <v-btn
-              v-bind="props"
-              icon="mdi-check-all"
-              size="x-small"
-              color="info"
-              variant="tonal"
-              :loading="isConfirming"
-              @click.stop="onConfirm(item)"
-            />
-          </template>
-        </v-tooltip>
-        <v-tooltip text="Cancelar todas" location="top">
-          <template #activator="{ props }">
-            <v-btn
-              v-bind="props"
-              icon="mdi-close-circle-multiple"
-              size="x-small"
-              color="error"
-              variant="tonal"
-              :loading="isCancelling"
-              @click.stop="onCancel(item)"
             />
           </template>
         </v-tooltip>
@@ -139,6 +137,12 @@ import type {
   MultiRoomReservationFilters,
 } from '../interfaces/reservation.interface';
 
+interface ReservationRow {
+  id: string;
+  status: string;
+  room?: { number?: string };
+}
+
 const router = useRouter();
 const { openDrawer } = useDrawer();
 const { showLoading, hideLoading } = useLoading();
@@ -151,18 +155,8 @@ const filters = ref<MultiRoomReservationFilters>({
   sortOrder: 'desc',
 });
 
-const {
-  multiRoomReservations,
-  totalItems,
-  isFetching,
-  isError,
-  confirm,
-  cancel,
-  removeMany,
-  isConfirming,
-  isCancelling,
-  isDeletingMany,
-} = useMultiRoomReservations(filters);
+const { multiRoomReservations, totalItems, isFetching, isError, removeMany, isDeletingMany } =
+  useMultiRoomReservations(filters);
 
 watch(
   isFetching,
@@ -185,6 +179,7 @@ const tableItems = computed<Record<string, unknown>[]>(
 const columns: TableColumn[] = [
   { key: 'reservationCode', title: 'Código', visible: true },
   { key: 'customer', title: 'Cliente', visible: true },
+  { key: 'status', title: 'Estado', visible: true },
   { key: 'rooms', title: 'Habitaciones', visible: true },
   { key: 'checkInDate', title: 'Check-in', type: 'date', visible: true },
   { key: 'checkOutDate', title: 'Check-out', type: 'date', visible: true },
@@ -219,24 +214,6 @@ const onRowClick = (item: Record<string, unknown>) => {
   });
 };
 
-const onConfirm = async (item: Record<string, unknown>) => {
-  try {
-    await confirm(item.id as string);
-    showAlert({ message: 'Todas las reservas han sido confirmadas', type: 'success' });
-  } catch {
-    // El interceptor ya maneja el error
-  }
-};
-
-const onCancel = async (item: Record<string, unknown>) => {
-  try {
-    await cancel(item.id as string);
-    showAlert({ message: 'Las reservas elegibles han sido canceladas', type: 'success' });
-  } catch {
-    // El interceptor ya maneja el error
-  }
-};
-
 const onDelete = (items: Record<string, unknown>[]) => {
   itemsToDelete.value = items;
   deleteDialog.value = true;
@@ -262,10 +239,26 @@ const getCustomerName = (item: Record<string, unknown>): string => {
   return '-';
 };
 
-const getRoomsCount = (item: Record<string, unknown>): number => {
-  const reservations = item.reservations as unknown[] | undefined;
-  return reservations?.length ?? 0;
+const STATUS_COLORS: Record<string, string> = {
+  PENDING: 'warning',
+  CONFIRMED: 'info',
+  CHECKED_IN: 'success',
+  CHECKED_OUT: 'secondary',
+  CANCELLED: 'error',
+  NO_SHOW: 'purple',
 };
+
+const STATUS_LABELS: Record<string, string> = {
+  PENDING: 'Pendiente',
+  CONFIRMED: 'Confirmada',
+  CHECKED_IN: 'En curso',
+  CHECKED_OUT: 'Completada',
+  CANCELLED: 'Cancelada',
+  NO_SHOW: 'No presentado',
+};
+
+const getStatusColor = (status: string): string => STATUS_COLORS[status] ?? 'default';
+const getStatusLabel = (status: string): string => STATUS_LABELS[status] ?? status;
 
 const formatDate = (dateString: string): string => {
   if (!dateString) return '-';

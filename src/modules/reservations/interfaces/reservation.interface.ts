@@ -107,6 +107,8 @@ export interface MultiRoomReservation {
   checkOutDate: string;
   reservations: Reservation[];
   totalAmount: number;
+  roomsCount?: number;
+  status: ReservationStatus;
   notes?: string;
   createdAt: string;
   updatedAt: string;

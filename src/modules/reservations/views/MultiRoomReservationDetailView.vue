@@ -85,7 +85,7 @@
                     <th scope="col">Niños</th>
                     <th scope="col">Estado</th>
                     <th scope="col">Total</th>
-                    <th scope="col"></th>
+                    <th scope="col">Acciones</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -104,12 +104,88 @@
                     </td>
                     <td>{{ formatCurrency(reservation.totalAmount) }}</td>
                     <td>
-                      <v-btn
-                        icon="mdi-eye"
-                        size="x-small"
-                        variant="text"
-                        :to="{ name: 'reservations-detail', params: { id: reservation.id } }"
-                      />
+                      <div class="d-flex ga-1">
+                        <v-tooltip
+                          v-if="reservation.status === 'PENDING'"
+                          text="Confirmar"
+                          location="top"
+                        >
+                          <template #activator="{ props: tp }">
+                            <v-btn
+                              v-bind="tp"
+                              icon="mdi-check"
+                              size="x-small"
+                              color="info"
+                              variant="tonal"
+                              :loading="actionLoading[reservation.id]"
+                              @click="onConfirmReservation(reservation.id)"
+                            />
+                          </template>
+                        </v-tooltip>
+                        <v-tooltip
+                          v-if="reservation.status === 'CONFIRMED'"
+                          text="Check-in"
+                          location="top"
+                        >
+                          <template #activator="{ props: tp }">
+                            <v-btn
+                              v-bind="tp"
+                              icon="mdi-login"
+                              size="x-small"
+                              color="success"
+                              variant="tonal"
+                              :loading="actionLoading[reservation.id]"
+                              @click="onCheckIn(reservation.id)"
+                            />
+                          </template>
+                        </v-tooltip>
+                        <v-tooltip
+                          v-if="reservation.status === 'CHECKED_IN'"
+                          text="Check-out"
+                          location="top"
+                        >
+                          <template #activator="{ props: tp }">
+                            <v-btn
+                              v-bind="tp"
+                              icon="mdi-logout"
+                              size="x-small"
+                              color="warning"
+                              variant="tonal"
+                              :loading="actionLoading[reservation.id]"
+                              @click="onCheckOut(reservation.id)"
+                            />
+                          </template>
+                        </v-tooltip>
+                        <v-tooltip
+                          v-if="['PENDING', 'CONFIRMED'].includes(reservation.status)"
+                          text="Cancelar"
+                          location="top"
+                        >
+                          <template #activator="{ props: tp }">
+                            <v-btn
+                              v-bind="tp"
+                              icon="mdi-close"
+                              size="x-small"
+                              color="error"
+                              variant="tonal"
+                              :loading="actionLoading[reservation.id]"
+                              @click="onCancelReservation(reservation.id)"
+                            />
+                          </template>
+                        </v-tooltip>
+                        <v-tooltip text="Ver detalle" location="top">
+                          <template #activator="{ props: tp }">
+                            <v-btn
+                              v-bind="tp"
+                              icon="mdi-eye"
+                              size="x-small"
+                              color="success"
+                              variant="tonal"
+                              :to="{ name: 'reservations-detail', params: { id: reservation.id } }"
+                            />
+                          </template>
+                        </v-tooltip>
+                      </div>
                     </td>
                   </tr>
                 </tbody>
@@ -122,29 +198,7 @@
         <v-col cols="12" md="4">
           <v-card>
             <v-card-title>Acciones del grupo</v-card-title>
-            <v-card-text>
-              <v-btn
-                block
-                color="info"
-                class="mb-2"
-                prepend-icon="mdi-check-all"
-                :loading="isConfirming"
-                @click="onConfirmAll"
-              >
-                Confirmar todas
-              </v-btn>
-              <v-btn
-                block
-                color="error"
-                variant="outlined"
-                class="mb-2"
-                prepend-icon="mdi-close-circle-multiple"
-                :loading="isCancelling"
-                @click="onCancelAll"
-              >
-                Cancelar elegibles
-              </v-btn>
-            </v-card-text>
+            <v-card-text />
           </v-card>
         </v-col>
       </v-row>
@@ -161,12 +215,10 @@
 <script setup lang="ts">
 import { useAlert } from '@/modules/common/composables/useAlert';
 import { useQueryClient } from '@tanstack/vue-query';
-import { computed } from 'vue';
+import { computed, reactive } from 'vue';
 import { useRoute } from 'vue-router';
-import {
-  useMultiRoomReservation,
-  useMultiRoomReservationMutations,
-} from '../composables/useMultiRoomReservations';
+import { useMultiRoomReservation } from '../composables/useMultiRoomReservations';
+import { useReservationMutations } from '../composables/useReservations';
 import type { ReservationStatus } from '../interfaces/reservation.interface';
 
 const route = useRoute();
@@ -175,30 +227,38 @@ const { showAlert } = useAlert();
 
 const id = computed(() => route.params.id as string);
 const { multiRoomReservation, isLoading } = useMultiRoomReservation(id);
-const { confirm, cancel, isConfirming, isCancelling } = useMultiRoomReservationMutations();
+const { confirm, checkIn, checkOut, cancel } = useReservationMutations();
+
+// loading por reserva individual
+const actionLoading = reactive<Record<string, boolean>>({});
 
 const invalidate = () =>
   queryClient.invalidateQueries({ queryKey: ['multi-room-reservation', id] });
 
-const onConfirmAll = async () => {
+const runAction = async (reservationId: string, fn: () => Promise<unknown>, msg: string) => {
+  actionLoading[reservationId] = true;
   try {
-    await confirm(id.value);
+    await fn();
     invalidate();
-    showAlert({ message: 'Todas las reservas han sido confirmadas', type: 'success' });
+    showAlert({ message: msg, type: 'success' });
   } catch {
     // El interceptor ya maneja el error
+  } finally {
+    actionLoading[reservationId] = false;
   }
 };
 
-const onCancelAll = async () => {
-  try {
-    await cancel(id.value);
-    invalidate();
-    showAlert({ message: 'Las reservas elegibles han sido canceladas', type: 'success' });
-  } catch {
-    // El interceptor ya maneja el error
-  }
-};
+const onConfirmReservation = (reservationId: string) =>
+  runAction(reservationId, () => confirm(reservationId), 'Reserva confirmada');
+
+const onCheckIn = (reservationId: string) =>
+  runAction(reservationId, () => checkIn({ id: reservationId }), 'Check-in realizado');
+
+const onCheckOut = (reservationId: string) =>
+  runAction(reservationId, () => checkOut({ id: reservationId }), 'Check-out realizado');
+
+const onCancelReservation = (reservationId: string) =>
+  runAction(reservationId, () => cancel(reservationId), 'Reserva cancelada');
 
 const getStatusColor = (status: ReservationStatus): string => {
   const colors: Record<string, string> = {
