@@ -61,6 +61,8 @@
               :color="getStatusColor(reservation.status)"
               variant="tonal"
               class="mb-3"
+              :style="isNavigable(reservation.status) ? 'cursor: pointer' : 'cursor: not-allowed'"
+              @click="onReservationClick(reservation.id, reservation.status)"
             >
               <v-card-item>
                 <template #prepend>
@@ -291,5 +293,13 @@ const getRoomTypeLabel = (type?: string): string => {
 
 const goBack = () => {
   router.push('/customers');
+};
+
+const isNavigable = (status: ReservationStatus): boolean =>
+  status !== 'CANCELLED' && status !== 'CHECKED_OUT';
+
+const onReservationClick = (id: string, status: ReservationStatus) => {
+  if (!isNavigable(status)) return;
+  router.push({ name: 'reservations-detail', params: { id } });
 };
 </script>

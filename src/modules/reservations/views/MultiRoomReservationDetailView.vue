@@ -198,7 +198,17 @@
         <v-col cols="12" md="4">
           <v-card>
             <v-card-title>Acciones del grupo</v-card-title>
-            <v-card-text />
+            <v-card-text>
+              <v-btn
+                block
+                color="primary"
+                variant="tonal"
+                prepend-icon="mdi-printer"
+                @click="onPrint"
+              >
+                Imprimir reserva
+              </v-btn>
+            </v-card-text>
           </v-card>
         </v-col>
       </v-row>
@@ -213,6 +223,7 @@
 </template>
 
 <script setup lang="ts">
+import { generateMultiRoomReservationPdf } from '@/helpers/reservationPdf';
 import { useAlert } from '@/modules/common/composables/useAlert';
 import { useQueryClient } from '@tanstack/vue-query';
 import { computed, reactive } from 'vue';
@@ -259,6 +270,35 @@ const onCheckOut = (reservationId: string) =>
 
 const onCancelReservation = (reservationId: string) =>
   runAction(reservationId, () => cancel(reservationId), 'Reserva cancelada');
+
+const onPrint = () => {
+  if (!multiRoomReservation.value) return;
+  const mrr = multiRoomReservation.value;
+  generateMultiRoomReservationPdf({
+    reservationCode: mrr.reservationCode,
+    createdAt: mrr.createdAt,
+    checkInDate: mrr.checkInDate,
+    checkOutDate: mrr.checkOutDate,
+    customer: {
+      firstName: mrr.customer?.firstName ?? '',
+      lastName: mrr.customer?.lastName ?? '',
+      email: mrr.customer?.email,
+    },
+    rooms: mrr.reservations.map((r) => ({
+      number: r.room?.number ?? '-',
+      type: r.room?.type ?? '',
+      reservationCode: r.reservationCode,
+      adults: r.adults,
+      children: r.children,
+      checkInDate: r.checkInDate,
+      checkOutDate: r.checkOutDate,
+      status: r.status,
+      totalAmount: r.totalAmount,
+    })),
+    totalAmount: mrr.totalAmount,
+    notes: mrr.notes,
+  });
+};
 
 const getStatusColor = (status: ReservationStatus): string => {
   const colors: Record<string, string> = {
