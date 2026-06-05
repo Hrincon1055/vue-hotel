@@ -105,8 +105,9 @@
               v-model="room.roomId"
               label="Habitación"
               :items="getAvailableRoomOptions(index)"
-              :rules="[rules.required]"
+              :rules="isEditMode ? [] : [rules.required]"
               :loading="isLoadingRooms"
+              :disabled="isEditMode"
               variant="solo"
               density="comfortable"
               prepend-inner-icon="mdi-bed"
@@ -160,12 +161,16 @@ import { useAlert } from '@/modules/common/composables/useAlert';
 import { useDrawerStore } from '@/modules/common/store/drawer.store';
 import { customersService } from '@/modules/customers/services/customers.service';
 import { roomsService } from '@/modules/rooms/services/rooms.service';
-import { computed, onMounted, ref } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { useMultiRoomReservationMutations } from '../composables/useMultiRoomReservations';
-import type { CreateMultiRoomReservationRoomDto } from '../interfaces/reservation.interface';
+import type {
+  CreateMultiRoomReservationRoomDto,
+  MultiRoomReservation,
+} from '../interfaces/reservation.interface';
 
 const props = defineProps<{
+  multiRoomReservation?: MultiRoomReservation;
   inDrawer?: boolean;
 }>();
 
@@ -181,7 +186,7 @@ const { showAlert } = useAlert();
 
 const formRef = ref();
 const isValid = ref(false);
-const isEditMode = false;
+const isEditMode = computed(() => !!props.multiRoomReservation);
 
 // Opciones
 const customerOptions = ref<{ label: string; value: string }[]>([]);
@@ -228,6 +233,7 @@ const form = ref<{
 });
 
 const isFormValid = computed(() => {
+  if (isEditMode.value) return false; // No hay endpoint de actualización multi-room
   return isValid.value && form.value.rooms.length > 0 && form.value.rooms.every((r) => !!r.roomId);
 });
 
@@ -282,6 +288,17 @@ const loadRooms = async () => {
       label: `${room.number} - ${getRoomTypeLabel(room.type)} ($${room.pricePerNight}/noche)`,
       value: room.id,
     }));
+    // En modo edición, agregar las habitaciones ya reservadas que no estén en la lista
+    if (isEditMode.value && props.multiRoomReservation) {
+      for (const r of props.multiRoomReservation.reservations) {
+        if (r.room && !roomOptions.value.some((opt) => opt.value === r.roomId)) {
+          roomOptions.value.unshift({
+            label: `${r.room.number} - ${getRoomTypeLabel(r.room.type)} ($${r.room.pricePerNight}/noche)`,
+            value: r.roomId,
+          });
+        }
+      }
+    }
   } finally {
     isLoadingRooms.value = false;
   }
@@ -304,6 +321,26 @@ onMounted(() => {
   loadCustomers();
   loadRooms();
 });
+
+watch(
+  () => props.multiRoomReservation,
+  (reservation) => {
+    if (!reservation) return;
+    form.value = {
+      customerId: reservation.customerId,
+      checkInDate: reservation.checkInDate?.split('T')[0] ?? '',
+      checkOutDate: reservation.checkOutDate?.split('T')[0] ?? '',
+      notes: reservation.notes ?? '',
+      rooms: reservation.reservations.map((r) => ({
+        roomId: r.roomId,
+        adults: r.adults,
+        children: r.children,
+        notes: r.notes ?? '',
+      })),
+    };
+  },
+  { immediate: true },
+);
 
 const toDateString = (val: unknown): string => {
   if (!val) return '';

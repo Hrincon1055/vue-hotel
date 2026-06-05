@@ -93,6 +93,16 @@ export function useMultiRoomReservations(filters: Ref<MultiRoomReservationFilter
     onSuccess: () => queryClient.invalidateQueries({ queryKey: [QUERY_KEY] }),
   });
 
+  const deleteMutation = useMutation({
+    mutationFn: (id: string) => multiRoomReservationsService.delete(id),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: [QUERY_KEY] }),
+  });
+
+  const deleteManyMutation = useMutation({
+    mutationFn: (ids: string[]) => multiRoomReservationsService.deleteMany(ids),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: [QUERY_KEY] }),
+  });
+
   return {
     multiRoomReservations,
     meta,
@@ -106,8 +116,12 @@ export function useMultiRoomReservations(filters: Ref<MultiRoomReservationFilter
     create: createMutation.mutateAsync,
     confirm: confirmMutation.mutateAsync,
     cancel: cancelMutation.mutateAsync,
+    remove: deleteMutation.mutateAsync,
+    removeMany: deleteManyMutation.mutateAsync,
     isCreating: createMutation.isPending,
     isConfirming: confirmMutation.isPending,
     isCancelling: cancelMutation.isPending,
+    isDeleting: deleteMutation.isPending,
+    isDeletingMany: deleteManyMutation.isPending,
   };
 }

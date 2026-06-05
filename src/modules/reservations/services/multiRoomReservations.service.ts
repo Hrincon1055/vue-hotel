@@ -66,4 +66,12 @@ export const multiRoomReservationsService = {
     const { data } = await api.post<Response<MultiRoomReservation>>(`${BASE_URL}/${id}/cancel`);
     return data.data;
   },
+
+  async delete(id: string): Promise<void> {
+    await api.delete(`${BASE_URL}/${id}`);
+  },
+
+  async deleteMany(ids: string[]): Promise<void> {
+    await Promise.all(ids.map((id) => api.delete(`${BASE_URL}/${id}`)));
+  },
 };

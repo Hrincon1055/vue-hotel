@@ -9,6 +9,7 @@
     create-route="/reservations/multi-room/new"
     item-key="id"
     @search="onSearch"
+    @delete="onDelete"
   />
 
   <v-alert v-if="isError" type="error" variant="tonal" class="ma-4">
@@ -48,6 +49,23 @@
     </template>
     <template #[`item.actions`]="{ item }">
       <div class="d-flex ga-1">
+        <v-tooltip text="Ver detalle" location="top">
+          <template #activator="{ props }">
+            <v-btn
+              v-bind="props"
+              icon="mdi-eye"
+              size="x-small"
+              color="primary"
+              variant="tonal"
+              @click.stop="
+                router.push({
+                  name: 'reservations-multi-detail',
+                  params: { id: item.id as string },
+                })
+              "
+            />
+          </template>
+        </v-tooltip>
         <v-tooltip text="Confirmar todas" location="top">
           <template #activator="{ props }">
             <v-btn
@@ -81,6 +99,27 @@
   <v-snackbar v-model="snackbar.show" :color="snackbar.color" :timeout="3000">
     {{ snackbar.message }}
   </v-snackbar>
+
+  <v-dialog v-model="deleteDialog" max-width="420">
+    <v-card>
+      <v-card-title class="text-h6">Confirmar eliminación</v-card-title>
+      <v-card-text>
+        ¿Estás seguro de que deseas eliminar
+        {{
+          itemsToDelete.length === 1
+            ? 'esta reserva multi-habitación'
+            : `${itemsToDelete.length} reservas multi-habitación`
+        }}? Esta acción no se puede deshacer.
+      </v-card-text>
+      <v-card-actions>
+        <v-spacer />
+        <v-btn variant="text" @click="deleteDialog = false">Volver</v-btn>
+        <v-btn color="error" variant="tonal" :loading="isDeletingMany" @click="confirmDelete">
+          Eliminar
+        </v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
 </template>
 
 <script setup lang="ts">
@@ -95,7 +134,10 @@ import { computed, reactive, ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import MultiRoomReservationForm from '../components/MultiRoomReservationForm.vue';
 import { useMultiRoomReservations } from '../composables/useMultiRoomReservations';
-import type { MultiRoomReservationFilters } from '../interfaces/reservation.interface';
+import type {
+  MultiRoomReservation,
+  MultiRoomReservationFilters,
+} from '../interfaces/reservation.interface';
 
 const router = useRouter();
 const { openDrawer } = useDrawer();
@@ -116,8 +158,10 @@ const {
   isError,
   confirm,
   cancel,
+  removeMany,
   isConfirming,
   isCancelling,
+  isDeletingMany,
 } = useMultiRoomReservations(filters);
 
 watch(
@@ -131,6 +175,8 @@ watch(
 
 const selectedItems = ref<Record<string, unknown>[]>([]);
 const snackbar = reactive({ show: false, message: '', color: 'success' });
+const deleteDialog = ref(false);
+const itemsToDelete = ref<Record<string, unknown>[]>([]);
 
 const tableItems = computed<Record<string, unknown>[]>(
   () => multiRoomReservations.value as unknown as Record<string, unknown>[],
@@ -163,7 +209,14 @@ const onSort = (key: string, order: 'asc' | 'desc') => {
 };
 
 const onRowClick = (item: Record<string, unknown>) => {
-  router.push({ name: 'reservations-multi-detail', params: { id: item.id as string } });
+  openDrawer({
+    title: 'Reserva Multi-Habitación',
+    component: MultiRoomReservationForm,
+    props: {
+      multiRoomReservation: item as unknown as MultiRoomReservation,
+      inDrawer: true,
+    },
+  });
 };
 
 const onConfirm = async (item: Record<string, unknown>) => {
@@ -179,6 +232,23 @@ const onCancel = async (item: Record<string, unknown>) => {
   try {
     await cancel(item.id as string);
     showAlert({ message: 'Las reservas elegibles han sido canceladas', type: 'success' });
+  } catch {
+    // El interceptor ya maneja el error
+  }
+};
+
+const onDelete = (items: Record<string, unknown>[]) => {
+  itemsToDelete.value = items;
+  deleteDialog.value = true;
+};
+
+const confirmDelete = async () => {
+  try {
+    const ids = itemsToDelete.value.map((item) => item.id as string);
+    await removeMany(ids);
+    selectedItems.value = [];
+    deleteDialog.value = false;
+    showAlert({ message: 'Reserva(s) eliminada(s) correctamente', type: 'success' });
   } catch {
     // El interceptor ya maneja el error
   }
@@ -210,15 +280,4 @@ const formatCurrency = (amount: number): string => {
   if (amount === undefined || amount === null) return '-';
   return new Intl.NumberFormat('es-ES', { style: 'currency', currency: 'USD' }).format(amount);
 };
-
-// Expuesto para que ContentHeader muestre el botón "Nuevo" que abre el drawer si se necesita
-const openCreateDrawer = () => {
-  openDrawer({
-    title: 'Nueva Reserva Multi-Habitación',
-    component: MultiRoomReservationForm,
-    props: { inDrawer: true },
-  });
-};
-
-// openCreateDrawer disponible para uso futuro desde template si se necesita
 </script>
